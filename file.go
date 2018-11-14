@@ -12,7 +12,7 @@ type File struct {
 
 // Close close the log file
 func (f *File) Close() {
-	if f.file != nil {
+	if f != nil && f.file != nil {
 		f.file.Close()
 	}
 	deleteInstance()

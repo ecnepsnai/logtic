@@ -23,9 +23,10 @@ func dummySource() Source {
 
 // Debug log debug messages
 func (s *Source) Debug(format string, a ...interface{}) {
-	if s.dummy {
+	if s == nil || s.dummy == true {
 		return
 	}
+
 	if s.Level < LevelDebug {
 		return
 	}
@@ -36,9 +37,10 @@ func (s *Source) Debug(format string, a ...interface{}) {
 
 // Info log information messages
 func (s *Source) Info(format string, a ...interface{}) {
-	if s.dummy {
+	if s == nil || s.dummy == true {
 		return
 	}
+
 	if s.Level < LevelInfo {
 		return
 	}
@@ -49,9 +51,10 @@ func (s *Source) Info(format string, a ...interface{}) {
 
 // Warn log warning messages
 func (s *Source) Warn(format string, a ...interface{}) {
-	if s.dummy {
+	if s == nil || s.dummy == true {
 		return
 	}
+
 	if s.Level < LevelWarn {
 		return
 	}
@@ -62,9 +65,10 @@ func (s *Source) Warn(format string, a ...interface{}) {
 
 // Error log error messages
 func (s *Source) Error(format string, a ...interface{}) {
-	if s.dummy {
+	if s == nil || s.dummy == true {
 		return
 	}
+
 	if s.Level < LevelError {
 		return
 	}
@@ -75,7 +79,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 
 // Fatal log a fatal error then exit the application
 func (s *Source) Fatal(format string, a ...interface{}) {
-	if !s.dummy {
+	if s != nil && !s.dummy {
 		message := fmt.Sprintf(format, a...)
 		fmt.Printf("%s %s\n", color.RedString("[FATAL]["+s.className+"]"), message)
 		s.file.write("[FATAL][" + s.className + "] " + message)
@@ -86,7 +90,7 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 // Panic log a fatal error then panic
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
-	if !s.dummy {
+	if s != nil && !s.dummy {
 		fmt.Printf("%s %s\n", color.RedString("[FATAL]["+s.className+"]"), message)
 		s.file.write("[FATAL][" + s.className + "] " + message)
 	}
