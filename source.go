@@ -23,11 +23,7 @@ func dummySource() Source {
 
 // Debug log debug messages
 func (s *Source) Debug(format string, a ...interface{}) {
-	if s == nil || s.dummy == true {
-		return
-	}
-
-	if s.Level < LevelDebug {
+	if s == nil || s.dummy == true || s.Level < LevelDebug {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
@@ -37,11 +33,7 @@ func (s *Source) Debug(format string, a ...interface{}) {
 
 // Info log information messages
 func (s *Source) Info(format string, a ...interface{}) {
-	if s == nil || s.dummy == true {
-		return
-	}
-
-	if s.Level < LevelInfo {
+	if s == nil || s.dummy == true || s.Level < LevelInfo {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
@@ -51,11 +43,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 
 // Warn log warning messages
 func (s *Source) Warn(format string, a ...interface{}) {
-	if s == nil || s.dummy == true {
-		return
-	}
-
-	if s.Level < LevelWarn {
+	if s == nil || s.dummy == true || s.Level < LevelWarn {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
@@ -65,11 +53,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 
 // Error log error messages
 func (s *Source) Error(format string, a ...interface{}) {
-	if s == nil || s.dummy == true {
-		return
-	}
-
-	if s.Level < LevelError {
+	if s == nil || s.dummy == true || s.Level < LevelError {
 		return
 	}
 	message := fmt.Sprintf(format, a...)

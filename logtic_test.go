@@ -15,7 +15,7 @@ func TestWrite(t *testing.T) {
 		fmt.Printf("Unable to create temporary directory: %s\n", err.Error())
 		os.Exit(1)
 	}
-	file, _, err := New(path.Join(dir, "app.log"), LevelDebug, "logtic")
+	file, s, err := New(path.Join(dir, "app.log"), LevelDebug, "logtic")
 	if err != nil {
 		fmt.Printf("Unable to create new logtic instance: %s\n", err.Error())
 		os.Exit(1)
@@ -23,6 +23,8 @@ func TestWrite(t *testing.T) {
 	defer file.Close()
 
 	var wg sync.WaitGroup
+
+	s.Debug("Start test")
 
 	wg.Add(3)
 	go func() {

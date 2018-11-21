@@ -27,9 +27,9 @@ func discoverDescriptorForProcess() (*instance, error) {
 }
 
 type instance struct {
-	FileDescriptor uint   `json:"file_descriptor"`
-	Path           string `json:"path"`
-	Level          int    `json:"level"`
+	FilePointer uint64 `json:"file_pointer_address"`
+	Path        string `json:"path"`
+	Level       int    `json:"level"`
 }
 
 func (i *instance) save() {

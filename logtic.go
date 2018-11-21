@@ -9,6 +9,7 @@ package logtic
 
 import (
 	"os"
+	"unsafe"
 )
 
 // New create a new logtic log file and source. This should only be called by
@@ -20,7 +21,8 @@ func New(path string, level int, sourceName string) (*File, *Source, error) {
 	}
 	var logFile *os.File
 	if settings != nil {
-		logFile = os.NewFile(uintptr(settings.FileDescriptor), settings.Path)
+		pointer := uintptr(settings.FilePointer)
+		logFile = (*os.File)(unsafe.Pointer(pointer))
 	} else {
 		f, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
@@ -28,11 +30,12 @@ func New(path string, level int, sourceName string) (*File, *Source, error) {
 		}
 		logFile = f
 
-		fd := uint(f.Fd())
+		pointer := unsafe.Pointer(f)
+
 		s := instance{
-			FileDescriptor: fd,
-			Path:           path,
-			Level:          level,
+			FilePointer: uint64(uintptr(pointer)),
+			Path:        path,
+			Level:       level,
 		}
 		s.save()
 	}
@@ -43,6 +46,7 @@ func New(path string, level int, sourceName string) (*File, *Source, error) {
 	source := Source{
 		file:      file,
 		className: sourceName,
+		Level:     level,
 	}
 
 	return &file, &source, nil
@@ -58,7 +62,8 @@ func Connect(sourceName string) *Source {
 	}
 	var logFile *os.File
 	if settings != nil {
-		logFile = os.NewFile(uintptr(settings.FileDescriptor), settings.Path)
+		pointer := uintptr(settings.FilePointer)
+		logFile = (*os.File)(unsafe.Pointer(pointer))
 	} else {
 		return &dummy
 	}
