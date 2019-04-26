@@ -9,6 +9,7 @@ package logtic
 
 import (
 	"os"
+	"sync"
 	"unsafe"
 )
 
@@ -41,7 +42,9 @@ func New(path string, level int, sourceName string) (*File, *Source, error) {
 	}
 
 	file := File{
-		file: logFile,
+		file:    logFile,
+		logPath: path,
+		lock:    sync.Mutex{},
 	}
 	source := Source{
 		file:      file,
