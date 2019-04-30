@@ -1,27 +1,32 @@
-package logtic
+package logtic_test
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/ecnepsnai/logtic"
 )
 
 func TestWrite(t *testing.T) {
+	logtic.Reset()
+
 	dir, err := ioutil.TempDir("", "logtic")
 	if err != nil {
-		fmt.Printf("Unable to create temporary directory: %s\n", err.Error())
-		os.Exit(1)
+		panic(err)
 	}
-	file, s, err := New(path.Join(dir, "app.log"), LevelDebug, "logtic")
-	if err != nil {
-		fmt.Printf("Unable to create new logtic instance: %s\n", err.Error())
-		os.Exit(1)
+
+	logtic.Log.FilePath = path.Join(dir, "logtic.log")
+	logtic.Log.Level = logtic.LevelDebug
+
+	if err := logtic.Open(); err != nil {
+		t.Fatalf("Error opening log file: %s", err.Error())
 	}
-	defer file.Close()
+
+	s := logtic.Connect("Test")
 
 	var wg sync.WaitGroup
 
@@ -30,7 +35,7 @@ func TestWrite(t *testing.T) {
 	wg.Add(3)
 	go func() {
 		defer wg.Done()
-		source := Connect("goroutine1")
+		source := logtic.Connect("goroutine1")
 		i := 0
 		for i < 100 {
 			i++
@@ -42,7 +47,7 @@ func TestWrite(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := Connect("goroutine2")
+		source := logtic.Connect("goroutine2")
 		i := 0
 		for i < 100 {
 			i++
@@ -54,7 +59,7 @@ func TestWrite(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := Connect("goroutine3")
+		source := logtic.Connect("goroutine3")
 		i := 0
 		for i < 100 {
 			i++
@@ -67,13 +72,16 @@ func TestWrite(t *testing.T) {
 
 	wg.Wait()
 }
+
 func TestDummy(t *testing.T) {
+	logtic.Reset()
+
 	var wg sync.WaitGroup
 
 	wg.Add(3)
 	go func() {
 		defer wg.Done()
-		source := Connect("goroutine1")
+		source := logtic.Connect("goroutine1")
 		i := 0
 		for i < 100 {
 			i++
@@ -85,7 +93,7 @@ func TestDummy(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := Connect("goroutine2")
+		source := logtic.Connect("goroutine2")
 		i := 0
 		for i < 100 {
 			i++
@@ -97,7 +105,7 @@ func TestDummy(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := Connect("goroutine3")
+		source := logtic.Connect("goroutine3")
 		i := 0
 		for i < 100 {
 			i++
@@ -112,17 +120,22 @@ func TestDummy(t *testing.T) {
 }
 
 func TestRotate(t *testing.T) {
+	logtic.Reset()
+
 	dir, err := ioutil.TempDir("", "logtic")
 	if err != nil {
-		fmt.Printf("Unable to create temporary directory: %s\n", err.Error())
-		os.Exit(1)
+		panic(err)
 	}
-	file, s, err := New(path.Join(dir, "app.log"), LevelDebug, "logtic")
-	if err != nil {
-		fmt.Printf("Unable to create new logtic instance: %s\n", err.Error())
-		os.Exit(1)
+
+	logtic.Log.FilePath = path.Join(dir, "app.log")
+	logtic.Log.Level = logtic.LevelDebug
+
+	if err := logtic.Open(); err != nil {
+		t.Fatalf("Error opening log file: %s", err.Error())
 	}
-	defer file.Close()
+
+	s := logtic.Connect("Test")
+
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
@@ -137,7 +150,7 @@ func TestRotate(t *testing.T) {
 		}
 	}()
 	time.Sleep(1 * time.Millisecond)
-	if err := file.Rotate(); err != nil {
+	if err := logtic.Rotate(); err != nil {
 		t.Fatalf("Error rotating log file: %s", err.Error())
 	}
 	wg.Wait()
