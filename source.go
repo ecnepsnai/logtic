@@ -56,7 +56,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
-	fmt.Printf("%s %s\n", color.RedString("[ERROR]["+s.className+"]"), message)
+	fmt.Fprintf(os.Stderr, "%s %s\n", color.RedString("[ERROR]["+s.className+"]"), message)
 	Log.write("[ERROR][" + s.className + "] " + message)
 }
 
@@ -64,7 +64,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 func (s *Source) Fatal(format string, a ...interface{}) {
 	if s != nil && !s.dummy {
 		message := fmt.Sprintf(format, a...)
-		fmt.Printf("%s %s\n", color.RedString("[FATAL]["+s.className+"]"), message)
+		fmt.Fprintf(os.Stderr, "%s %s\n", color.RedString("[FATAL]["+s.className+"]"), message)
 		Log.write("[FATAL][" + s.className + "] " + message)
 	}
 	os.Exit(1)
@@ -74,7 +74,7 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
 	if s != nil && !s.dummy {
-		fmt.Printf("%s %s\n", color.RedString("[FATAL]["+s.className+"]"), message)
+		fmt.Fprintf(os.Stderr, "%s %s\n", color.RedString("[FATAL]["+s.className+"]"), message)
 		Log.write("[FATAL][" + s.className + "] " + message)
 	}
 	panic(message)
