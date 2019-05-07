@@ -26,7 +26,7 @@ func Open() error {
 		return nil
 	}
 
-	f, err := os.OpenFile(Log.FilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	f, err := os.OpenFile(Log.FilePath, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
 		return err
 	}

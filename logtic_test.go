@@ -138,6 +138,7 @@ func TestRotate(t *testing.T) {
 
 	var wg sync.WaitGroup
 	wg.Add(1)
+
 	go func() {
 		defer wg.Done()
 		i := 0
@@ -149,9 +150,10 @@ func TestRotate(t *testing.T) {
 			s.Error("Count %d", i)
 		}
 	}()
+
 	time.Sleep(1 * time.Millisecond)
 	if err := logtic.Rotate(); err != nil {
-		t.Fatalf("Error rotating log file: %s", err.Error())
+		panic(err)
 	}
 	wg.Wait()
 
@@ -165,4 +167,18 @@ func TestRotate(t *testing.T) {
 	if _, err := os.Stat(expectedPath); err != nil {
 		t.Errorf("Expected new log file not found: '%s'", expectedPath)
 	}
+
+	checkFileSize := func(path string) {
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Errorf("Error stating rotated log file: %s", err.Error())
+		}
+
+		if info.Size() == 0 {
+			t.Errorf("Rotated log file is empty")
+		}
+	}
+
+	checkFileSize(expectedPath)
+	checkFileSize(logtic.Log.FilePath)
 }

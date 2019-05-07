@@ -1,6 +1,8 @@
 package logtic
 
 import (
+	"fmt"
+	"io"
 	"os"
 	"strings"
 	"time"
@@ -27,15 +29,33 @@ func Rotate() error {
 	newName := strings.Replace(fileName, extension, date+"."+extension, -1)
 	newPath := strings.Replace(Log.FilePath, fileName, newName, -1)
 
-	Log.file.Close()
-	if err := os.Rename(Log.FilePath, newPath); err != nil {
+	// Rewind the file pointer
+	_, err := Log.file.Seek(0, io.SeekStart)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error rewinding log file '%s': %s\n", Log.FilePath, err.Error())
 		return err
 	}
 
-	newFile, err := os.OpenFile(Log.FilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	// Open the new log file
+	newFile, err := os.OpenFile(newPath, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error opening rotated log file '%s': %s\n", newPath, err.Error())
 		return err
 	}
-	Log.file = newFile
+
+	// Copy the contents and close the file
+	length, err := io.Copy(newFile, Log.file)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error copying current log file '%s' contents to rotated file '%s': %s\n", Log.FilePath, newPath, err.Error())
+		return err
+	}
+	newFile.Close()
+
+	// Truncate the file
+	if err := Log.file.Truncate(length); err != nil {
+		fmt.Fprintf(os.Stderr, "Error truncating current log file '%s': %s\n", Log.FilePath, err.Error())
+		return err
+	}
+
 	return nil
 }
