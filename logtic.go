@@ -46,10 +46,6 @@ func Reset() {
 // Connect connect to an existing logtic log file for this process and inherit its settings
 // if no logtic session is running, do nothing
 func Connect(sourceName string) *Source {
-	dummy := dummySource()
-	if Log.file == nil {
-		return &dummy
-	}
 	return &Source{
 		className: sourceName,
 	}
