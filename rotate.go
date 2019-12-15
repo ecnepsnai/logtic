@@ -26,7 +26,7 @@ func Rotate() error {
 	pathComponents := strings.Split(Log.FilePath, string(os.PathSeparator))
 	fileName := pathComponents[len(pathComponents)-1]
 	date := time.Now().Format("2006-01-02")
-	newName := strings.Replace(fileName, extension, date+"."+extension, -1)
+	newName := strings.Replace(fileName, extension, extension+"."+date, -1)
 	newPath := strings.Replace(Log.FilePath, fileName, newName, -1)
 
 	// Rewind the file pointer
@@ -52,7 +52,8 @@ func Rotate() error {
 	newFile.Close()
 
 	// Truncate the file
-	if err := Log.file.Truncate(length); err != nil {
+	Log.file.Seek(length, io.SeekEnd)
+	if err := Log.file.Truncate(0); err != nil {
 		fmt.Fprintf(os.Stderr, "Error truncating current log file '%s': %s\n", Log.FilePath, err.Error())
 		return err
 	}

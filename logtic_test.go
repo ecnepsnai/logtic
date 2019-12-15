@@ -1,6 +1,7 @@
 package logtic_test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -135,37 +136,30 @@ func TestRotate(t *testing.T) {
 	}
 
 	s := logtic.Connect("Test")
+	i := 0
+	for i < 5 {
+		i++
+		s.Debug("Count %d", i)
+		s.Info("Count %d", i)
+		s.Warn("Count %d", i)
+		s.Error("Count %d", i)
+	}
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-
-	go func() {
-		defer wg.Done()
-		i := 0
-		for i < 100 {
-			i++
-			s.Debug("Count %d", i)
-			s.Info("Count %d", i)
-			s.Warn("Count %d", i)
-			s.Error("Count %d", i)
-		}
-	}()
-
-	time.Sleep(1 * time.Millisecond)
 	if err := logtic.Rotate(); err != nil {
 		panic(err)
 	}
-	wg.Wait()
+
+	s.Info("Rotated log")
 
 	date := time.Now().Format("2006-01-02")
-	expectedPath := path.Join(dir, "app."+date+".log")
+	expectedPath := path.Join(dir, "app.log."+date)
 	if _, err := os.Stat(expectedPath); err != nil {
 		t.Errorf("Expected rotated log file not found: '%s'", expectedPath)
 	}
 
-	expectedPath = path.Join(dir, "app.log")
-	if _, err := os.Stat(expectedPath); err != nil {
-		t.Errorf("Expected new log file not found: '%s'", expectedPath)
+	currentPath := path.Join(dir, "app.log")
+	if _, err := os.Stat(currentPath); err != nil {
+		t.Errorf("Expected new log file not found: '%s'", currentPath)
 	}
 
 	checkFileSize := func(path string) {
@@ -174,13 +168,15 @@ func TestRotate(t *testing.T) {
 			t.Errorf("Error stating rotated log file: %s", err.Error())
 		}
 
+		fmt.Printf("%s -> %d\n", path, info.Size())
+
 		if info.Size() == 0 {
 			t.Errorf("Rotated log file is empty")
 		}
 	}
 
 	checkFileSize(expectedPath)
-	checkFileSize(logtic.Log.FilePath)
+	checkFileSize(currentPath)
 }
 
 func TestEarlyConnect(t *testing.T) {
