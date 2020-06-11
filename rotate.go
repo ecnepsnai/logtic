@@ -8,10 +8,12 @@ import (
 	"time"
 )
 
-// Rotate will rotate the logfile. The current logfile will be renamed and
-// suffixed with the current date in a YYYY-MM-DD format.
-// A new log file will be opened with the same original file and used for all
-// subsequent writes. Writes will be blocked while the rotation is in progress.
+// Rotate will rotate the logfile. The current logfile will be renamed and suffixed with the current date in a
+// YYYY-MM-DD format. A new log file will be opened with the originally used file path and used for all subsequent
+// writes. Writes will be blocked while the rotation is in progress.
+//
+// If an error is returned during rotation it is recommended that you either panic or attempt to reopen the log file
+// as logtic will be in an undefined state and may not work.
 func Rotate() error {
 	if Log.file == nil {
 		return nil
@@ -37,7 +39,7 @@ func Rotate() error {
 	}
 
 	// Open the new log file
-	newFile, err := os.OpenFile(newPath, os.O_RDWR|os.O_CREATE, 0600)
+	newFile, err := os.OpenFile(newPath, os.O_RDWR|os.O_CREATE, Log.FileMode)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error opening rotated log file '%s': %s\n", newPath, err.Error())
 		return err

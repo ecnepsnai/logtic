@@ -14,7 +14,7 @@ type Source struct {
 	className string
 }
 
-// Debug log debug messages
+// Debug will log a debug message
 func (s *Source) Debug(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || Log.Level < LevelDebug {
 		return
@@ -24,7 +24,7 @@ func (s *Source) Debug(format string, a ...interface{}) {
 	Log.write("[DEBUG][" + s.className + "] " + message)
 }
 
-// Info log information messages
+// Info will log an informational message
 func (s *Source) Info(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || Log.Level < LevelInfo {
 		return
@@ -34,7 +34,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 	Log.write("[INFO][" + s.className + "] " + message)
 }
 
-// Warn log warning messages
+// Warn will log a warning message
 func (s *Source) Warn(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || Log.Level < LevelWarn {
 		return
@@ -44,7 +44,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 	Log.write("[WARN][" + s.className + "] " + message)
 }
 
-// Error log error messages
+// Error will log an error message. Errors are printed to stderr.
 func (s *Source) Error(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || Log.Level < LevelError {
 		return
@@ -54,7 +54,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 	Log.write("[ERROR][" + s.className + "] " + message)
 }
 
-// Fatal log a fatal error then exit the application
+// Fatal will log a fatal error message and exit the application with status 1. Fatal messages are printed to stderr.
 func (s *Source) Fatal(format string, a ...interface{}) {
 	if s != nil && !s.dummy {
 		message := fmt.Sprintf(format, a...)
@@ -64,7 +64,7 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 	os.Exit(1)
 }
 
-// Panic log a fatal error then panic
+// Panic functions like source.Fatal() but panics rather than exits.
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
 	if s != nil && !s.dummy {

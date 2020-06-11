@@ -7,10 +7,12 @@ import (
 
 // Settings describes the log settings for this application
 type Settings struct {
-	// FilePath the path to the log file.
+	// The path to the log file.
 	FilePath string
-	// Level the log level. Use the predefined logtic.Level(X) constants.
+	// The minimum level of events captured in the log file and printed to console. Inclusive.
 	Level int
+	// The file mode (permissions) used for the log file and rotated log files.
+	FileMode os.FileMode
 
 	file *os.File
 	lock sync.Mutex

@@ -1,12 +1,15 @@
-// Package logtic is a (another) logging library for golang projects
+// Package logtic is a (another) logging library for golang projects.
 //
-// Logtic is meant for large applications that contain multiple libraries
-// that all need to write to a single log file.
-// Logtic is transparent in that it can be included in your libraries and attach
-// to any log file if the parent application is using logtic, otherwise it
-// just does nothing.
-// The overall goal of logtic is that "it just works", meaning there should be little
-// effort required to get it working the correct way.
+// The goal of logtic is to be as transparent and easy to use as possible, allowing applications and libraries to
+// seamlessly log to a single file. Logtic can be used in libraries and won't cause any problems if the parent
+// application isn't using logtic.
+//
+// Logtic supports multiple sources, which annotate the outputted log lines. It also supports defining a minimum
+// desired log level, which can be changed at any time.
+//
+// By default, logtic will only print to stdout and stderr, but when configured it can also write to a log file.
+// Logtic can also rotate these log files out by invoking the logtic.Rotate() method. Log files include the date-time
+// for each line in RFC-3339 format.
 package logtic
 
 import (
@@ -16,7 +19,9 @@ import (
 
 // Log the global log settings for this application
 var Log = &Settings{
-	lock: sync.Mutex{},
+	FilePath: os.DevNull,
+	Level:    LevelError,
+	FileMode: 0644,
 }
 
 // Open will open the file specified by the FilePath for writing. It will create the file if it does not
@@ -26,7 +31,7 @@ func Open() error {
 		return nil
 	}
 
-	f, err := os.OpenFile(Log.FilePath, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0600)
+	f, err := os.OpenFile(Log.FilePath, os.O_APPEND|os.O_RDWR|os.O_CREATE, Log.FileMode)
 	if err != nil {
 		return err
 	}
