@@ -15,7 +15,7 @@ import (
 func TestWrite(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}

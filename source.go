@@ -74,6 +74,30 @@ func (s *Source) Panic(format string, a ...interface{}) {
 	panic(message)
 }
 
+// Write will call the matching write function for the given level, printing the provided message.
+// For example:
+//     source.Write(logtic.LevelDebug, "Hello world")
+// is the same as:
+//     source.Debug("Hello world")
+func (s *Source) Write(level int, format string, a ...interface{}) {
+	switch level {
+	case LevelDebug:
+		s.Debug(format, a...)
+		break
+	case LevelInfo:
+		s.Info(format, a...)
+		break
+	case LevelWarn:
+		s.Warn(format, a...)
+		break
+	case LevelError:
+		s.Error(format, a...)
+		break
+	default:
+		return
+	}
+}
+
 func (l *Settings) write(message string) {
 	l.lock.Lock()
 	defer l.lock.Unlock()
