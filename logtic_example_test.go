@@ -9,7 +9,7 @@ import (
 // Common setup for file-based logging
 func Example() {
 	// Set the log file path and default log level (if desired)
-	logtic.Log.FilePath = "/path/to/log/file.log"
+	logtic.Log.FilePath = "./file.log"
 	logtic.Log.Level = logtic.LevelInfo
 
 	if err := logtic.Open(); err != nil {
@@ -22,13 +22,15 @@ func Example() {
 
 	// Don't forget to close the log file when your application exits
 	logtic.Close()
+
+	// output: [WARN][MyApp] Print something COOL!
 }
 
 // This example shows how to prepare logtic for writing to a log file
 func ExampleOpen() {
 	// You must tell logtic where the log file is
 	// before any events will be captured
-	logtic.Log.FilePath = "/path/to/log/file.log"
+	logtic.Log.FilePath = "./file.log"
 	// The default level is Error, you can change that at any time
 	logtic.Log.Level = logtic.LevelInfo
 

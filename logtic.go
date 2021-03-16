@@ -44,7 +44,10 @@ func Open() error {
 func Reset() {
 	Close()
 	Log = &Settings{
-		lock: sync.Mutex{},
+		FilePath: os.DevNull,
+		Level:    LevelError,
+		FileMode: 0644,
+		lock:     sync.Mutex{},
 	}
 }
 

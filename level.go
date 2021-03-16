@@ -1,7 +1,7 @@
 package logtic
 
 const (
-	// LevelDebug debug level includes debugging information and is very verbose
+	// LevelDebug debug messages for troubleshooting application behaviour
 	LevelDebug = 3
 	// LevelInfo informational messages for normal operation of the application
 	LevelInfo = 2
