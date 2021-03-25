@@ -22,8 +22,6 @@ func Example() {
 
 	// Don't forget to close the log file when your application exits
 	logtic.Close()
-
-	// output: [WARN][MyApp] Print something COOL!
 }
 
 // This example shows how to prepare logtic for writing to a log file

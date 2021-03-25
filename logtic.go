@@ -23,6 +23,7 @@ var Log = &Settings{
 	FilePath: os.DevNull,
 	Level:    LevelError,
 	FileMode: 0644,
+	Color:    true,
 }
 
 // Open will open the file specified by the FilePath for writing. It will create the file if it does not
@@ -49,6 +50,7 @@ func Reset() {
 		Level:    LevelError,
 		FileMode: 0644,
 		lock:     sync.Mutex{},
+		Color:    true,
 	}
 }
 

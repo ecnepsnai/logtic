@@ -2,11 +2,14 @@ package logtic
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"time"
-
-	"github.com/fatih/color"
 )
+
+// Abstract these out so we can test them
+var stdout io.Writer = os.Stdout
+var stderr io.Writer = os.Stderr
 
 // Source describes a source for log events
 type Source struct {
@@ -28,7 +31,7 @@ func (s *Source) Debug(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
-	fmt.Printf("%s %s\n", color.HiBlackString("[DEBUG]["+s.Name+"]"), message)
+	fmt.Fprintf(stdout, "%s %s\n", colorHiBlackString("[DEBUG]["+s.Name+"]"), message)
 	Log.write("[DEBUG][" + s.Name + "] " + message)
 }
 
@@ -38,7 +41,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
-	fmt.Printf("%s %s\n", color.BlueString("[INFO]["+s.Name+"]"), message)
+	fmt.Fprintf(stdout, "%s %s\n", colorBlueString("[INFO]["+s.Name+"]"), message)
 	Log.write("[INFO][" + s.Name + "] " + message)
 }
 
@@ -48,7 +51,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
-	fmt.Printf("%s %s\n", color.YellowString("[WARN]["+s.Name+"]"), message)
+	fmt.Fprintf(stdout, "%s %s\n", colorYellowString("[WARN]["+s.Name+"]"), message)
 	Log.write("[WARN][" + s.Name + "] " + message)
 }
 
@@ -58,7 +61,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
-	fmt.Fprintf(os.Stderr, "%s %s\n", color.RedString("[ERROR]["+s.Name+"]"), message)
+	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[ERROR]["+s.Name+"]"), message)
 	Log.write("[ERROR][" + s.Name + "] " + message)
 }
 
@@ -66,7 +69,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 func (s *Source) Fatal(format string, a ...interface{}) {
 	if s != nil && !s.dummy {
 		message := fmt.Sprintf(format, a...)
-		fmt.Fprintf(os.Stderr, "%s %s\n", color.RedString("[FATAL]["+s.Name+"]"), message)
+		fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
 		Log.write("[FATAL][" + s.Name + "] " + message)
 	}
 	os.Exit(1)
@@ -76,7 +79,7 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
 	if s != nil && !s.dummy {
-		fmt.Fprintf(os.Stderr, "%s %s\n", color.RedString("[FATAL]["+s.Name+"]"), message)
+		fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
 		Log.write("[FATAL][" + s.Name + "] " + message)
 	}
 	panic(message)
