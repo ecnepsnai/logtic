@@ -1,11 +1,12 @@
-// Package logtic is a (another) logging library for golang projects.
+// Package logtic is a logging library for golang projects.
 //
 // The goal of logtic is to be as transparent and easy to use as possible, allowing applications and libraries to
 // seamlessly log to a single file. Logtic can be used in libraries and won't cause any problems if the parent
 // application isn't using logtic.
 //
-// Logtic supports multiple sources, which annotate the outputted log lines. It also supports defining a minimum
-// desired log level, which can be changed at any time.
+// Logtic supports multiple sources, which annotate the outputted log entries. It also supports defining a minimum
+// desired log level, which can be changed at any time. Log sources can override the default log level, which can
+// also be changed at any time.
 //
 // By default, logtic will only print to stdout and stderr, but when configured it can also write to a log file.
 // Logtic can also rotate these log files out by invoking the logtic.Rotate() method. Log files include the date-time
@@ -55,7 +56,8 @@ func Reset() {
 // if no logtic session is running, do nothing
 func Connect(sourceName string) *Source {
 	return &Source{
-		className: sourceName,
+		Name:  sourceName,
+		Level: -1,
 	}
 }
 
