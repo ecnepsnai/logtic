@@ -25,7 +25,7 @@ func (s *Source) checkLevel(levelWanted int) bool {
 	return Log.Level < levelWanted
 }
 
-// Debug will log a debug message
+// Debug will log a debug formatted message.
 func (s *Source) Debug(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || s.checkLevel(LevelDebug) {
 		return
@@ -35,7 +35,7 @@ func (s *Source) Debug(format string, a ...interface{}) {
 	Log.write("[DEBUG][" + s.Name + "] " + message)
 }
 
-// Info will log an informational message
+// Info will log an informational formatted message.
 func (s *Source) Info(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || s.checkLevel(LevelInfo) {
 		return
@@ -45,7 +45,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 	Log.write("[INFO][" + s.Name + "] " + message)
 }
 
-// Warn will log a warning message
+// Warn will log a warning formatted message.
 func (s *Source) Warn(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || s.checkLevel(LevelWarn) {
 		return
@@ -55,7 +55,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 	Log.write("[WARN][" + s.Name + "] " + message)
 }
 
-// Error will log an error message. Errors are printed to stderr.
+// Error will log an error formatted message. Errors are printed to stderr.
 func (s *Source) Error(format string, a ...interface{}) {
 	if s == nil || Log.file == nil || s.checkLevel(LevelError) {
 		return
@@ -65,7 +65,8 @@ func (s *Source) Error(format string, a ...interface{}) {
 	Log.write("[ERROR][" + s.Name + "] " + message)
 }
 
-// Fatal will log a fatal error message and exit the application with status 1. Fatal messages are printed to stderr.
+// Fatal will log a fatal formatted error message and exit the application with status 1.
+// Fatal messages are printed to stderr.
 func (s *Source) Fatal(format string, a ...interface{}) {
 	if s != nil && !s.dummy {
 		message := fmt.Sprintf(format, a...)

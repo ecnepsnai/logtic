@@ -1,7 +1,7 @@
 package logtic_test
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"path"
 	"regexp"
@@ -14,7 +14,7 @@ import (
 func TestSources(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +45,7 @@ func TestSources(t *testing.T) {
 	}
 	defer f.Close()
 
-	logFileData, err := ioutil.ReadAll(f)
+	logFileData, err := io.ReadAll(f)
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +73,7 @@ func TestPanic(t *testing.T) {
 
 	logtic.Reset()
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -93,7 +93,7 @@ func TestPanic(t *testing.T) {
 func TestSourceLevel(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -120,7 +120,7 @@ func TestSourceLevel(t *testing.T) {
 	}
 	defer f.Close()
 
-	logFileData, err := ioutil.ReadAll(f)
+	logFileData, err := io.ReadAll(f)
 	if err != nil {
 		panic(err)
 	}
@@ -133,4 +133,25 @@ func TestSourceLevel(t *testing.T) {
 	if source2Pattern.Match(logFileData) {
 		t.Errorf("Log file contains log line that should not exist")
 	}
+}
+
+func TestSourceWriteUnknownLevel(t *testing.T) {
+	logtic.Reset()
+
+	dir, err := os.MkdirTemp("", "logtic")
+	if err != nil {
+		panic(err)
+	}
+
+	logtic.Log.FilePath = path.Join(dir, "logtic.log")
+	logtic.Log.Level = logtic.LevelDebug
+
+	if err := logtic.Open(); err != nil {
+		t.Fatalf("Error opening log file: %s", err.Error())
+	}
+
+	source := logtic.Connect("test")
+
+	source.Write(9001, "What level is this?")
+	source.PWrite(9001, "Crazy!", nil)
 }

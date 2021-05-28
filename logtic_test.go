@@ -1,7 +1,7 @@
 package logtic_test
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"sync"
 	"testing"
@@ -12,7 +12,7 @@ import (
 func TestWrite(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -122,7 +122,7 @@ func TestEarlyConnect(t *testing.T) {
 
 	s := logtic.Connect("Test")
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -177,4 +177,31 @@ func TestEarlyConnect(t *testing.T) {
 	}()
 
 	wg.Wait()
+}
+
+func TestOpenTwice(t *testing.T) {
+	logtic.Reset()
+
+	s := logtic.Connect("Test")
+
+	dir, err := os.MkdirTemp("", "logtic")
+	if err != nil {
+		panic(err)
+	}
+
+	logtic.Log.FilePath = path.Join(dir, "logtic.log")
+	logtic.Log.Level = logtic.LevelDebug
+
+	if err := logtic.Open(); err != nil {
+		t.Fatalf("Error opening log file: %s", err.Error())
+	}
+
+	s.Debug("Testing 123")
+
+	if err := logtic.Open(); err != nil {
+		t.Fatalf("Unexpected error opening already open log file: %s", err.Error())
+	}
+
+	s2 := logtic.Connect("Test2")
+	s2.Debug("Testing 123")
 }

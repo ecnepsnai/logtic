@@ -13,7 +13,7 @@ type Settings struct {
 	Level int
 	// The file mode (permissions) used for the log file and rotated log files.
 	FileMode os.FileMode
-	// Should logtic use color for events printed to stdout/stderr
+	// Should logtic use color for events printed to stdout/stderr.
 	Color bool
 
 	file *os.File

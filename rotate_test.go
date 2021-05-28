@@ -2,7 +2,6 @@ package logtic_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"testing"
@@ -14,7 +13,7 @@ import (
 func TestRotate(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +72,7 @@ func TestRotate(t *testing.T) {
 func TestRotateDuplicate(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := ioutil.TempDir("", "logtic")
+	dir, err := os.MkdirTemp("", "logtic")
 	if err != nil {
 		panic(err)
 	}
