@@ -1,7 +1,7 @@
 package logtic_test
 
 import (
-	"io"
+	"io/ioutil"
 	"os"
 	"path"
 	"regexp"
@@ -14,7 +14,7 @@ import (
 func TestSources(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
+	dir, err := ioutil.TempDir("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +45,7 @@ func TestSources(t *testing.T) {
 	}
 	defer f.Close()
 
-	logFileData, err := io.ReadAll(f)
+	logFileData, err := ioutil.ReadAll(f)
 	if err != nil {
 		panic(err)
 	}
@@ -73,7 +73,7 @@ func TestPanic(t *testing.T) {
 
 	logtic.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
+	dir, err := ioutil.TempDir("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -93,7 +93,7 @@ func TestPanic(t *testing.T) {
 func TestSourceLevel(t *testing.T) {
 	logtic.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
+	dir, err := ioutil.TempDir("", "logtic")
 	if err != nil {
 		panic(err)
 	}
@@ -120,7 +120,7 @@ func TestSourceLevel(t *testing.T) {
 	}
 	defer f.Close()
 
-	logFileData, err := io.ReadAll(f)
+	logFileData, err := ioutil.ReadAll(f)
 	if err != nil {
 		panic(err)
 	}

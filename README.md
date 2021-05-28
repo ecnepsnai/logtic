@@ -5,7 +5,7 @@
 [![Releases](https://img.shields.io/github/release/ecnepsnai/logtic/all.svg?style=flat-square)](https://github.com/ecnepsnai/logtic/releases)
 [![LICENSE](https://img.shields.io/github/license/ecnepsnai/logtic.svg?style=flat-square)](https://github.com/ecnepsnai/logtic/blob/master/LICENSE)
 
-Package logtic is a (another) logging library for golang projects.
+Logtic is a yet another logging library for golang projects.
 
 The goal of logtic is to be as transparent and easy to use as possible, allowing applications and libraries to
 seamlessly log to a single file. Logtic can be used in libraries and won't cause any problems if the parent
@@ -14,9 +14,11 @@ application isn't using logtic.
 Logtic supports multiple sources, which annotate the outputted log lines. It also supports defining a minimum
 desired log level, which can be changed at any time.
 
-By default, logtic will only print to stdout and stderr, but when configured it can also write to a log file.
-Logtic can also rotate these log files out by invoking the logtic.Rotate() method. Log files include the date-time
-for each line in RFC-3339 format.
+Events can be printed as formatted strings, like with `fmt.Printf`, or can be parameterized events which can be easily
+parsed by log analysis tools such as Splunk.
+
+By default, logtic will only print to stdout and stderr, but when configured it can also write to a log file. Log files
+include the date-time for each event in RFC-3339 format. Log files can be rotated using the `logtic.Rotate()` method.
 
 # Usage & Examples
 
@@ -38,6 +40,7 @@ func main() {
         panic(err)
     }
     log = logtic.Connect("MyApp")
+    log.Info("This is an %s message", "informational")
     defer logtic.Close()
 }
 ```
@@ -52,6 +55,7 @@ func main() {
     // will open a console-only log file
     logtic.Open()
     log = logtic.Connect("MyApp")
+    log.Info("This is an %s message", "informational")
 }
 ```
 

@@ -2,18 +2,18 @@ package logtic
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"strings"
 	"time"
 )
 
 // Rotate will rotate the logfile. The current logfile will be renamed and suffixed with the current date in a
-// YYYY-MM-DD format. A new log file will be opened with the originally used file path and used for all subsequent
-// writes. Writes will be blocked while the rotation is in progress.
+// YYYY-MM-DD format. A new log file will be opened with the original file path and used for all subsequent
+// writes. Writes will be blocked while the rotation is in progress. If a file matching the name of what would be used
+// for the rotated file, a numerical suffix is added to the end of the name.
 //
-// If an error is returned during rotation it is recommended that you either panic or attempt to reopen the log file
-// as logtic will be in an undefined state and may not work.
+// If an error is returned during rotation it is highly recommended that you either panic or call logtic.Reset()
+// as logtic may be in an undefined state and log calls may cause panics.
 func Rotate() error {
 	if Log.file == nil {
 		return nil
@@ -31,34 +31,32 @@ func Rotate() error {
 	newName := strings.Replace(fileName, extension, extension+"."+date, -1)
 	newPath := strings.Replace(Log.FilePath, fileName, newName, -1)
 
-	// Rewind the file pointer
-	_, err := Log.file.Seek(0, io.SeekStart)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error rewinding log file '%s': %s\n", Log.FilePath, err.Error())
-		return err
+	if fileExists(newPath) {
+		i := 1
+		for fileExists(fmt.Sprintf("%s-%d", newPath, i)) {
+			i++
+		}
+		newPath = fmt.Sprintf("%s-%d", newPath, i)
 	}
 
-	// Open the new log file
-	newFile, err := os.OpenFile(newPath, os.O_RDWR|os.O_CREATE, Log.FileMode)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error opening rotated log file '%s': %s\n", newPath, err.Error())
+	Log.file.Close()
+	Log.file = nil
+
+	if err := os.Rename(Log.FilePath, newPath); err != nil {
+		fmt.Fprintf(os.Stderr, "Error renaming existing log file: %s", err.Error())
 		return err
 	}
-
-	// Copy the contents and close the file
-	length, err := io.Copy(newFile, Log.file)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error copying current log file '%s' contents to rotated file '%s': %s\n", Log.FilePath, newPath, err.Error())
-		return err
-	}
-	newFile.Close()
-
-	// Truncate the file
-	Log.file.Seek(length, io.SeekEnd)
-	if err := Log.file.Truncate(0); err != nil {
-		fmt.Fprintf(os.Stderr, "Error truncating current log file '%s': %s\n", Log.FilePath, err.Error())
+	if err := Open(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error opening new log file '%s': %s", Log.FilePath, err.Error())
 		return err
 	}
 
 	return nil
+}
+
+func fileExists(filePath string) bool {
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
