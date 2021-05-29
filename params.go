@@ -62,7 +62,35 @@ func StringFromParameters(parameters map[string]interface{}) string {
 	return out
 }
 
-// Pdebug will log a debug parameterized message.
+// FormatBytesB takes in a number of bytes and returns a human readable string with binary units (up-to Exbibyte)
+func FormatBytesB(b uint64) string {
+	const unit = 1024
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %ciB", float64(b)/float64(div), "KMGTPE"[exp])
+}
+
+// FormatBytesB takes in a number of bytes and returns a human readable string with decimal units (up-to Exabyte)
+func FormatBytesD(b uint64) string {
+	const unit = 1000
+	if b < unit {
+		return fmt.Sprintf("%d B", b)
+	}
+	div, exp := int64(unit), 0
+	for n := b / unit; n >= unit; n /= unit {
+		div *= unit
+		exp++
+	}
+	return fmt.Sprintf("%.1f %cB", float64(b)/float64(div), "KMGTPE"[exp])
+}
+
+// PDebug will log a debug parameterized message.
 // Parameterized messages are formatted as key=value strings. Depending on the type of the parameter value, it may
 // be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always alphabetically
 // sorted in the outputted string.

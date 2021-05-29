@@ -1,7 +1,9 @@
 package logtic_test
 
 import (
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/ecnepsnai/logtic"
 )
@@ -180,4 +182,27 @@ func ExampleRotate() {
 		// It's recommended that you panic or exit here, as logtic is now in an undefined state
 		panic(err)
 	}
+}
+
+func ExampleStringFromParameters() {
+	fmt.Println(logtic.StringFromParameters(map[string]interface{}{
+		"hello":            "world!",
+		"meaning_of_life":  42,
+		"pie":              3.12,
+		"does_golang_rock": true,
+		"secret_sauce":     []byte("mayo ketchup sriracha"),
+		"unix_epoch":       time.Unix(0, 0).UTC(),
+		"prime_numbers":    []int{2, 3, 5, 7, 11},
+	}))
+	// output: does_golang_rock='true' hello='world!' meaning_of_life=42 pie=3.120000 prime_numbers='[2 3 5 7 11]' secret_sauce=6d61796f206b657463687570207372697261636861 unix_epoch='1970-01-01T00:00:00Z'
+}
+
+func ExampleFormatBytesB() {
+	fmt.Println(logtic.FormatBytesB(10485760))
+	// output: 10.0 MiB
+}
+
+func ExampleFormatBytesD() {
+	fmt.Println(logtic.FormatBytesD(10000000))
+	// output: 10.0 MB
 }

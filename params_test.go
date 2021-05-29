@@ -6,6 +6,7 @@ import (
 	"path"
 	"regexp"
 	"testing"
+	"time"
 
 	"github.com/ecnepsnai/logtic"
 )
@@ -56,4 +57,65 @@ func TestSourceParameters(t *testing.T) {
 	if !pattern.Match(logFileData) {
 		t.Errorf("Log file does not contain expected log line for Debug message")
 	}
+}
+
+func TestStringFromParameters(t *testing.T) {
+	test := func(in interface{}, expected string) {
+		out := logtic.StringFromParameters(map[string]interface{}{
+			"key": in,
+		})
+		result := out[4:]
+		if result != expected {
+			t.Errorf("Unexpected result for StringFromParameters. For %v Expected \"%s\" got \"%s\"", in, expected, result)
+		}
+	}
+
+	test("hello", "'hello'")
+	test(123, "123")
+	test(true, "'true'")
+	test([]byte("hello"), "68656c6c6f")
+	test([]int{1, 2, 3}, "'[1 2 3]'")
+	test(time.Unix(0, 0).UTC(), "'1970-01-01T00:00:00Z'")
+	test(map[string]string{"hello": "world"}, "'map[hello:world]'")
+	test(struct{ hello string }{hello: "world"}, "'{world}'")
+	test(3.14, "3.140000")
+}
+
+func TestFormatBytesB(t *testing.T) {
+	test := func(in uint64, expected string) {
+		result := logtic.FormatBytesB(in)
+		if result != expected {
+			t.Errorf("Unexpected result from FormatBytesB. For %d Expected '%s' got '%s'", in, expected, result)
+		}
+	}
+
+	test(100, "100 B")
+	test(1024, "1.0 KiB")
+	test(10240, "10.0 KiB")
+	test(102400, "100.0 KiB")
+	test(1024000, "1000.0 KiB")
+	test(438143210, "417.8 MiB")
+	test(57435943275, "53.5 GiB")
+	test(2482587438925, "2.3 TiB")
+	test(957183938585752, "870.6 TiB")
+	test(65718393858575225, "58.4 PiB")
+}
+func TestFormatBytesD(t *testing.T) {
+	test := func(in uint64, expected string) {
+		result := logtic.FormatBytesD(in)
+		if result != expected {
+			t.Errorf("Unexpected result from FormatBytesD. For %d Expected '%s' got '%s'", in, expected, result)
+		}
+	}
+
+	test(100, "100 B")
+	test(1000, "1.0 KB")
+	test(10000, "10.0 KB")
+	test(100000, "100.0 KB")
+	test(1000000, "1.0 MB")
+	test(417800000, "417.8 MB")
+	test(53500000000, "53.5 GB")
+	test(2300000000000, "2.3 TB")
+	test(870600000000000, "870.6 TB")
+	test(58400000000000000, "58.4 PB")
 }
