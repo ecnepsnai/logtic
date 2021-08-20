@@ -30,13 +30,13 @@ func TestSources(t *testing.T) {
 	source := logtic.Connect("test")
 
 	source.Write(logtic.LevelDebug, "this is a %s message", "debug")
-	debugPattern := regexp.MustCompile(`[0-9\-:T]+ \[DEBUG\]\[test\] this is a debug message`)
+	debugPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[DEBUG\]\[test\] this is a debug message`)
 	source.Write(logtic.LevelInfo, "this is an %s message", "info")
-	infoPattern := regexp.MustCompile(`[0-9\-:T]+ \[INFO\]\[test\] this is an info message`)
+	infoPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[INFO\]\[test\] this is an info message`)
 	source.Write(logtic.LevelWarn, "this is a %s message", "warning")
-	warnPattern := regexp.MustCompile(`[0-9\-:T]+ \[WARN\]\[test\] this is a warning message`)
+	warnPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[WARN\]\[test\] this is a warning message`)
 	source.Write(logtic.LevelError, "this is an %s message", "error")
-	errorPattern := regexp.MustCompile(`[0-9\-:T]+ \[ERROR\]\[test\] this is an error message`)
+	errorPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[ERROR\]\[test\] this is an error message`)
 
 	logtic.Close()
 
