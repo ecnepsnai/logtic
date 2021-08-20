@@ -35,36 +35,27 @@ func TestWrite(t *testing.T) {
 		defer wg.Done()
 		source := logtic.Connect("goroutine1")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		source := logtic.Connect("goroutine2")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		source := logtic.Connect("goroutine3")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 
@@ -81,36 +72,27 @@ func TestDummy(t *testing.T) {
 		defer wg.Done()
 		source := logtic.Connect("goroutine1")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		source := logtic.Connect("goroutine2")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		source := logtic.Connect("goroutine3")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 
@@ -143,36 +125,27 @@ func TestEarlyConnect(t *testing.T) {
 		defer wg.Done()
 		source := logtic.Connect("goroutine1")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		source := logtic.Connect("goroutine2")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 	go func() {
 		defer wg.Done()
 		source := logtic.Connect("goroutine3")
 		i := 0
-		for i < 100 {
+		for i < 5 {
 			i++
 			source.Debug("Count %d", i)
-			source.Info("Count %d", i)
-			source.Warn("Count %d", i)
-			source.Error("Count %d", i)
 		}
 	}()
 

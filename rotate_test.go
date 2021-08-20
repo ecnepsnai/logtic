@@ -30,9 +30,6 @@ func TestRotate(t *testing.T) {
 	for i < 5 {
 		i++
 		s.Debug("Count %d", i)
-		s.Info("Count %d", i)
-		s.Warn("Count %d", i)
-		s.Error("Count %d", i)
 	}
 
 	if err := logtic.Rotate(); err != nil {
@@ -93,9 +90,6 @@ func TestRotateDuplicate(t *testing.T) {
 		for y < 5 {
 			y++
 			s.Debug("i=%d y=%d", i, y)
-			s.Info("i=%d y=%d", i, y)
-			s.Warn("i=%d y=%d", i, y)
-			s.Error("i=%d y=%d", i, y)
 		}
 
 		if err := logtic.Rotate(); err != nil {
