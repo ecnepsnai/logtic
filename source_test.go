@@ -1,6 +1,7 @@
 package logtic_test
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -61,6 +62,9 @@ func TestSources(t *testing.T) {
 	}
 	if !errorPattern.Match(logFileData) {
 		t.Errorf("Log file does not contain expected log line for Error message")
+	}
+	if t.Failed() {
+		fmt.Printf("Log file data:\n%s\n", logFileData)
 	}
 }
 
