@@ -39,7 +39,7 @@ func TestSourceParameters(t *testing.T) {
 	source.PWrite(logtic.LevelInfo, "Event", parameters)
 	source.PWrite(logtic.LevelWarn, "Event", parameters)
 	source.PWrite(logtic.LevelError, "Event", parameters)
-	pattern := regexp.MustCompile(`[0-9\-:T]+ \[(DEBUG|INFO|WARN|ERROR)\]\[test\] Event: bool='true' bytes=48656c6c6f2c20776f726c6421 float=3.140000 int=123 slice='\[1 2 3\]' string='hello, world!'`)
+	pattern := regexp.MustCompile(`[0-9\-:TZ]+ \[(DEBUG|INFO|WARN|ERROR)\]\[test\] Event: bool='true' bytes=48656c6c6f2c20776f726c6421 float=3.140000 int=123 slice='\[1 2 3\]' string='hello, world!'`)
 
 	logtic.Close()
 
