@@ -129,8 +129,8 @@ func TestSourceLevel(t *testing.T) {
 		panic(err)
 	}
 
-	source1Pattern := regexp.MustCompile(`[0-9\-:T]+ \[INFO\]\[source1\] info message`)
-	source2Pattern := regexp.MustCompile(`[0-9\-:T]+ \[INFO\]\[source2\] info message`)
+	source1Pattern := regexp.MustCompile(`[0-9\-:TZ]+ \[INFO\]\[source1\] info message`)
+	source2Pattern := regexp.MustCompile(`[0-9\-:TZ]+ \[INFO\]\[source2\] info message`)
 	if !source1Pattern.Match(logFileData) {
 		t.Errorf("Log file does not contain expected log lines")
 	}
