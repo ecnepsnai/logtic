@@ -2,7 +2,6 @@ package logtic_test
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"path"
 	"regexp"
@@ -13,21 +12,18 @@ import (
 
 // Test that the expected lines are printed to a log file
 func TestSources(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "logtic.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	source := logtic.Connect("test")
+	source := logtic.Log.Connect("test")
 
 	source.Write(logtic.LevelDebug, "this is a %s message", "debug")
 	debugPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[DEBUG\]\[test\] this is a debug message`)
@@ -40,13 +36,7 @@ func TestSources(t *testing.T) {
 
 	logtic.Close()
 
-	f, err := os.OpenFile(path.Join(dir, "logtic.log"), os.O_RDONLY, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	logFileData, err := io.ReadAll(f)
+	logFileData, err := os.ReadFile(path.Join(dir, "logtic.log"))
 	if err != nil {
 		panic(err)
 	}
@@ -75,42 +65,36 @@ func TestPanic(t *testing.T) {
 		}
 	}()
 
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "logtic.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	source := logtic.Connect("test")
+	source := logtic.Log.Connect("test")
 
 	source.Panic("Ahh!")
 }
 
 func TestSourceLevel(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "logtic.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	source1 := logtic.Connect("source1")
-	source2 := logtic.Connect("source2")
+	source1 := logtic.Log.Connect("source1")
+	source2 := logtic.Log.Connect("source2")
 	source2.Level = logtic.LevelWarn
 
 	source1.Info("info message")
@@ -118,13 +102,7 @@ func TestSourceLevel(t *testing.T) {
 
 	logtic.Close()
 
-	f, err := os.OpenFile(path.Join(dir, "logtic.log"), os.O_RDONLY, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	logFileData, err := io.ReadAll(f)
+	logFileData, err := os.ReadFile(path.Join(dir, "logtic.log"))
 	if err != nil {
 		panic(err)
 	}
@@ -140,22 +118,82 @@ func TestSourceLevel(t *testing.T) {
 }
 
 func TestSourceWriteUnknownLevel(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "logtic.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	source := logtic.Connect("test")
+	source := logtic.Log.Connect("test")
 
 	source.Write(9001, "What level is this?")
 	source.PWrite(9001, "Crazy!", nil)
+}
+
+func TestMultipleLogs(t *testing.T) {
+	logtic.Log.Reset()
+
+	dir := t.TempDir()
+
+	aLogPath := path.Join(dir, "a.log")
+	bLogPath := path.Join(dir, "b.log")
+
+	logtic.Log.FilePath = aLogPath
+	logtic.Log.Level = logtic.LevelDebug
+
+	if err := logtic.Log.Open(); err != nil {
+		t.Fatalf("Error opening a log file: %s", err.Error())
+	}
+
+	aSource := logtic.Log.Connect("a-source")
+
+	bLog := logtic.New()
+	bLog.FilePath = bLogPath
+	bLog.Level = logtic.LevelDebug
+
+	if err := bLog.Open(); err != nil {
+		t.Fatalf("Error opening b log file: %s", err.Error())
+	}
+
+	bSource := bLog.Connect("b-source")
+
+	aSource.Info("Info")
+	bSource.Warn("Warn")
+
+	logtic.Close()
+	bLog.Close()
+
+	aLogData, err := os.ReadFile(aLogPath)
+	if err != nil {
+		t.Fatalf("Error reading log file data: %s", err.Error())
+	}
+	bLogData, err := os.ReadFile(bLogPath)
+	if err != nil {
+		t.Fatalf("Error reading log file data: %s", err.Error())
+	}
+
+	infoPattern := regexp.MustCompile(`\[INFO\]\[[ab]-source\] Info`)
+	warnPattern := regexp.MustCompile(`\[WARN\]\[[ab]-source\] Warn`)
+	if !infoPattern.Match(aLogData) {
+		t.Errorf("Incorrect log data sent to source: info not found in A log")
+	}
+	if warnPattern.Match(aLogData) {
+		t.Errorf("Incorrect log data sent to source: warn found in A log")
+	}
+	if infoPattern.Match(bLogData) {
+		t.Errorf("Incorrect log data sent to source: info found in B log")
+	}
+	if !warnPattern.Match(bLogData) {
+		t.Errorf("Incorrect log data sent to source: warn not found in B log")
+	}
+
+	if t.Failed() {
+		t.Logf("a file: %s", aLogData)
+		t.Logf("b file: %s", bLogData)
+	}
 }

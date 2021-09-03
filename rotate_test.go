@@ -11,28 +11,25 @@ import (
 )
 
 func TestRotate(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "app.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	s := logtic.Connect("Test")
+	s := logtic.Log.Connect("Test")
 	i := 0
 	for i < 5 {
 		i++
 		s.Debug("Count %d", i)
 	}
 
-	if err := logtic.Rotate(); err != nil {
+	if err := logtic.Log.Rotate(); err != nil {
 		panic(err)
 	}
 
@@ -67,21 +64,18 @@ func TestRotate(t *testing.T) {
 }
 
 func TestRotateDuplicate(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "app.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	s := logtic.Connect("Test")
+	s := logtic.Log.Connect("Test")
 
 	i := 0
 	for i < 5 {
@@ -92,7 +86,7 @@ func TestRotateDuplicate(t *testing.T) {
 			s.Debug("i=%d y=%d", i, y)
 		}
 
-		if err := logtic.Rotate(); err != nil {
+		if err := logtic.Log.Rotate(); err != nil {
 			panic(err)
 		}
 

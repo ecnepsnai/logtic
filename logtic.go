@@ -8,66 +8,14 @@
 // desired log level, which can be changed at any time. Events printed to the terminal output support color-coded
 // severities.
 //
-// Events can be printed as formatted strings, like with `fmt.Printf`, or can be parameterized events which can be easily
-// parsed by log analysis tools such as Splunk.
+// Events can be printed as formatted strings, like with `fmt.Printf`, or can be parameterized events which can be
+// easily parsed by log analysis tools such as Splunk.
 //
-// By default, logtic will only print to stdout and stderr, but when configured it can also write to a log file. Log files
-// include the date-time for each event in RFC-3339 format. Log files can be rotated using the `logtic.Rotate()` method.
+// By default, logtic will only print to stdout and stderr, but when configured it can also write to a log file. Log
+// files include the date-time for each event in RFC-3339 format.
+//
+// Logtic provides a default logging instance but also supports unique instances that can operate in parallel, writing
+// to unique files and having unique settings.
+//
+// Log files can be rotated using the provided rotate method.
 package logtic
-
-import (
-	"os"
-	"sync"
-)
-
-// Log the global log settings for this application
-var Log = &Settings{
-	FilePath: os.DevNull,
-	Level:    LevelError,
-	FileMode: 0644,
-	Color:    true,
-}
-
-// Open will open the file specified by the FilePath for writing. It will create the file if it does not
-// exist, and append to existing files.
-func Open() error {
-	if Log.file != nil {
-		return nil
-	}
-
-	f, err := os.OpenFile(Log.FilePath, os.O_APPEND|os.O_RDWR|os.O_CREATE, Log.FileMode)
-	if err != nil {
-		return err
-	}
-	Log.file = f
-
-	return nil
-}
-
-// Reset will logtic to an unconfigured state, closing any open log files.
-func Reset() {
-	Close()
-	Log = &Settings{
-		FilePath: os.DevNull,
-		Level:    LevelError,
-		FileMode: 0644,
-		lock:     sync.Mutex{},
-		Color:    true,
-	}
-}
-
-// Connect will prepare a new logtic source with the given name. Sources can be written even if there is no open logtic
-// log session.
-func Connect(sourceName string) *Source {
-	return &Source{
-		Name:  sourceName,
-		Level: -1,
-	}
-}
-
-// Close will the log file.
-func Close() {
-	if Log.file != nil {
-		Log.file.Close()
-	}
-}

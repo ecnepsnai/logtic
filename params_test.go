@@ -1,7 +1,6 @@
 package logtic_test
 
 import (
-	"io"
 	"os"
 	"path"
 	"regexp"
@@ -12,17 +11,14 @@ import (
 )
 
 func TestSourceParameters(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	logPath := path.Join(t.TempDir(), "logtic.log")
 
-	logtic.Log.FilePath = path.Join(dir, "logtic.log")
+	logtic.Log.FilePath = logPath
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
@@ -34,7 +30,7 @@ func TestSourceParameters(t *testing.T) {
 		"bytes":  []byte("Hello, world!"),
 		"slice":  []int{1, 2, 3},
 	}
-	source := logtic.Connect("test")
+	source := logtic.Log.Connect("test")
 	source.PWrite(logtic.LevelDebug, "Event", parameters)
 	source.PWrite(logtic.LevelInfo, "Event", parameters)
 	source.PWrite(logtic.LevelWarn, "Event", parameters)
@@ -43,13 +39,7 @@ func TestSourceParameters(t *testing.T) {
 
 	logtic.Close()
 
-	f, err := os.OpenFile(path.Join(dir, "logtic.log"), os.O_RDONLY, 0644)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	logFileData, err := io.ReadAll(f)
+	logFileData, err := os.ReadFile(logPath)
 	if err != nil {
 		panic(err)
 	}

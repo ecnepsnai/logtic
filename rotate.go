@@ -7,29 +7,29 @@ import (
 	"time"
 )
 
-// Rotate will rotate the logfile. The current logfile will be renamed and suffixed with the current date in a
-// YYYY-MM-DD format. A new log file will be opened with the original file path and used for all subsequent
-// writes. Writes will be blocked while the rotation is in progress. If a file matching the name of what would be used
-// for the rotated file, a numerical suffix is added to the end of the name.
+// Rotate will rotate the log file of this logging instance. The current log file will be renamed and suffixed
+// with the current date in a YYYY-MM-DD format. A new log file will be opened with the original file path and used for
+// all subsequent writes. Writes will be blocked while the rotation is in progress. If a file matching the name of what
+// would be used for the rotated file, a numerical suffix is added to the end of the name.
 //
-// If an error is returned during rotation it is highly recommended that you either panic or call logtic.Reset()
+// If an error is returned during rotation it is highly recommended that you either panic or call logger.Reset()
 // as logtic may be in an undefined state and log calls may cause panics.
-func Rotate() error {
-	if Log.file == nil {
+func (l *Logger) Rotate() error {
+	if l.file == nil {
 		return nil
 	}
 
-	Log.lock.Lock()
-	defer Log.lock.Unlock()
+	l.lock.Lock()
+	defer l.lock.Unlock()
 
-	extensionComponents := strings.Split(Log.FilePath, ".")
+	extensionComponents := strings.Split(l.FilePath, ".")
 	extension := extensionComponents[len(extensionComponents)-1]
 
-	pathComponents := strings.Split(Log.FilePath, string(os.PathSeparator))
+	pathComponents := strings.Split(l.FilePath, string(os.PathSeparator))
 	fileName := pathComponents[len(pathComponents)-1]
 	date := time.Now().Format("2006-01-02")
 	newName := strings.Replace(fileName, extension, extension+"."+date, -1)
-	newPath := strings.Replace(Log.FilePath, fileName, newName, -1)
+	newPath := strings.Replace(l.FilePath, fileName, newName, -1)
 
 	if fileExists(newPath) {
 		i := 1
@@ -39,19 +39,32 @@ func Rotate() error {
 		newPath = fmt.Sprintf("%s-%d", newPath, i)
 	}
 
-	Log.file.Close()
-	Log.file = nil
+	l.file.Close()
+	l.file = nil
 
-	if err := os.Rename(Log.FilePath, newPath); err != nil {
+	if err := os.Rename(l.FilePath, newPath); err != nil {
 		fmt.Fprintf(os.Stderr, "Error renaming existing log file: %s", err.Error())
 		return err
 	}
 	if err := Open(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error opening new log file '%s': %s", Log.FilePath, err.Error())
+		fmt.Fprintf(os.Stderr, "Error opening new log file '%s': %s", l.FilePath, err.Error())
 		return err
 	}
 
 	return nil
+}
+
+// Rotate will rotate the log file of the default logging instance. The current log file will be renamed and suffixed
+// with the current date in a YYYY-MM-DD format. A new log file will be opened with the original file path and used for
+// all subsequent writes. Writes will be blocked while the rotation is in progress. If a file matching the name of what
+// would be used for the rotated file, a numerical suffix is added to the end of the name.
+//
+// If an error is returned during rotation it is highly recommended that you either panic or call logtic.Log.Reset()
+// as logtic may be in an undefined state and log calls may cause panics.
+//
+// As of logtic v1.7.0 this method calls logtic.Log.Rotate. This method will be removed in a future version of logtic.
+func Rotate() error {
+	return Log.Rotate()
 }
 
 func fileExists(filePath string) bool {

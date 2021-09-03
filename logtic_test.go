@@ -1,7 +1,6 @@
 package logtic_test
 
 import (
-	"os"
 	"path"
 	"sync"
 	"testing"
@@ -10,21 +9,18 @@ import (
 )
 
 func TestWrite(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "logtic.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	s := logtic.Connect("Test")
+	s := logtic.Log.Connect("Test")
 
 	var wg sync.WaitGroup
 
@@ -33,7 +29,7 @@ func TestWrite(t *testing.T) {
 	wg.Add(3)
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine1")
+		source := logtic.Log.Connect("goroutine1")
 		i := 0
 		for i < 5 {
 			i++
@@ -42,7 +38,7 @@ func TestWrite(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine2")
+		source := logtic.Log.Connect("goroutine2")
 		i := 0
 		for i < 5 {
 			i++
@@ -51,7 +47,7 @@ func TestWrite(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine3")
+		source := logtic.Log.Connect("goroutine3")
 		i := 0
 		for i < 5 {
 			i++
@@ -63,14 +59,14 @@ func TestWrite(t *testing.T) {
 }
 
 func TestDummy(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
 	var wg sync.WaitGroup
 
 	wg.Add(3)
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine1")
+		source := logtic.Log.Connect("goroutine1")
 		i := 0
 		for i < 5 {
 			i++
@@ -79,7 +75,7 @@ func TestDummy(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine2")
+		source := logtic.Log.Connect("goroutine2")
 		i := 0
 		for i < 5 {
 			i++
@@ -88,7 +84,7 @@ func TestDummy(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine3")
+		source := logtic.Log.Connect("goroutine3")
 		i := 0
 		for i < 5 {
 			i++
@@ -100,19 +96,16 @@ func TestDummy(t *testing.T) {
 }
 
 func TestEarlyConnect(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	s := logtic.Connect("Test")
+	s := logtic.Log.Connect("Test")
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "logtic.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
@@ -123,7 +116,7 @@ func TestEarlyConnect(t *testing.T) {
 	wg.Add(3)
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine1")
+		source := logtic.Log.Connect("goroutine1")
 		i := 0
 		for i < 5 {
 			i++
@@ -132,7 +125,7 @@ func TestEarlyConnect(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine2")
+		source := logtic.Log.Connect("goroutine2")
 		i := 0
 		for i < 5 {
 			i++
@@ -141,7 +134,7 @@ func TestEarlyConnect(t *testing.T) {
 	}()
 	go func() {
 		defer wg.Done()
-		source := logtic.Connect("goroutine3")
+		source := logtic.Log.Connect("goroutine3")
 		i := 0
 		for i < 5 {
 			i++
@@ -153,28 +146,25 @@ func TestEarlyConnect(t *testing.T) {
 }
 
 func TestOpenTwice(t *testing.T) {
-	logtic.Reset()
+	logtic.Log.Reset()
 
-	s := logtic.Connect("Test")
+	s := logtic.Log.Connect("Test")
 
-	dir, err := os.MkdirTemp("", "logtic")
-	if err != nil {
-		panic(err)
-	}
+	dir := t.TempDir()
 
 	logtic.Log.FilePath = path.Join(dir, "logtic.log")
 	logtic.Log.Level = logtic.LevelDebug
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
 	s.Debug("Testing 123")
 
-	if err := logtic.Open(); err != nil {
+	if err := logtic.Log.Open(); err != nil {
 		t.Fatalf("Unexpected error opening already open log file: %s", err.Error())
 	}
 
-	s2 := logtic.Connect("Test2")
+	s2 := logtic.Log.Connect("Test2")
 	s2.Debug("Testing 123")
 }
