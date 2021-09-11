@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // Abstract these out so we can test them
@@ -35,6 +36,9 @@ func (s *Source) Debug(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
+	if s.instance.Options.EscapeCharacters {
+		message = escapeCharacters(message)
+	}
 	fmt.Fprintf(stdout, "%s %s\n", colorHiBlackString("[DEBUG]["+s.Name+"]"), message)
 	s.write("[DEBUG][" + s.Name + "] " + message)
 }
@@ -45,6 +49,9 @@ func (s *Source) Info(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
+	if s.instance.Options.EscapeCharacters {
+		message = escapeCharacters(message)
+	}
 	fmt.Fprintf(stdout, "%s %s\n", colorBlueString("[INFO]["+s.Name+"]"), message)
 	s.write("[INFO][" + s.Name + "] " + message)
 }
@@ -55,6 +62,9 @@ func (s *Source) Warn(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
+	if s.instance.Options.EscapeCharacters {
+		message = escapeCharacters(message)
+	}
 	fmt.Fprintf(stdout, "%s %s\n", colorYellowString("[WARN]["+s.Name+"]"), message)
 	s.write("[WARN][" + s.Name + "] " + message)
 }
@@ -65,6 +75,9 @@ func (s *Source) Error(format string, a ...interface{}) {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
+	if s.instance.Options.EscapeCharacters {
+		message = escapeCharacters(message)
+	}
 	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[ERROR]["+s.Name+"]"), message)
 	s.write("[ERROR][" + s.Name + "] " + message)
 }
@@ -74,6 +87,9 @@ func (s *Source) Error(format string, a ...interface{}) {
 func (s *Source) Fatal(format string, a ...interface{}) {
 	if s != nil && !s.dummy {
 		message := fmt.Sprintf(format, a...)
+		if s.instance.Options.EscapeCharacters {
+			message = escapeCharacters(message)
+		}
 		fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
 		s.write("[FATAL][" + s.Name + "] " + message)
 	}
@@ -83,6 +99,9 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 // Panic functions like source.Fatal() but panics rather than exits.
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := fmt.Sprintf(format, a...)
+	if s != nil && s.instance != nil && s.instance.Options.EscapeCharacters {
+		message = escapeCharacters(message)
+	}
 	if s != nil && !s.dummy {
 		fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
 		s.write("[FATAL][" + s.Name + "] " + message)
@@ -108,4 +127,15 @@ func (s *Source) Write(level int, format string, a ...interface{}) {
 	default:
 		return
 	}
+}
+
+func escapeCharacters(message string) string {
+	message = strings.ReplaceAll(message, "\a", "\\a")
+	message = strings.ReplaceAll(message, "\b", "\\b")
+	message = strings.ReplaceAll(message, "\t", "\\t")
+	message = strings.ReplaceAll(message, "\n", "\\n")
+	message = strings.ReplaceAll(message, "\f", "\\f")
+	message = strings.ReplaceAll(message, "\r", "\\r")
+	message = strings.ReplaceAll(message, "\v", "\\v")
+	return message
 }

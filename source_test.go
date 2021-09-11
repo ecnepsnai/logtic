@@ -197,3 +197,43 @@ func TestMultipleLogs(t *testing.T) {
 		t.Logf("b file: %s", bLogData)
 	}
 }
+
+func TestSourceEscapeCharacters(t *testing.T) {
+	logtic.Log.Reset()
+
+	dir := t.TempDir()
+
+	logtic.Log.FilePath = path.Join(dir, "logtic.log")
+	logtic.Log.Level = logtic.LevelDebug
+
+	if err := logtic.Log.Open(); err != nil {
+		t.Fatalf("Error opening log file: %s", err.Error())
+	}
+
+	source := logtic.Log.Connect("test")
+
+	source.Write(logtic.LevelDebug, "Hello\n%s", "world")
+	debugPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[DEBUG\]\[test\] Hello\\nworld`)
+
+	logtic.Log.Options.EscapeCharacters = false
+
+	source.Write(logtic.LevelInfo, "Hello\n%s", "world")
+	infoPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[INFO\]\[test\] Hello\nworld`)
+
+	logtic.Log.Close()
+
+	logFileData, err := os.ReadFile(path.Join(dir, "logtic.log"))
+	if err != nil {
+		panic(err)
+	}
+
+	if !debugPattern.Match(logFileData) {
+		t.Errorf("Log file does not contain expected log line for Debug message")
+	}
+	if !infoPattern.Match(logFileData) {
+		t.Errorf("Log file does not contain expected log line for Info message")
+	}
+	if t.Failed() {
+		fmt.Printf("Log file data:\n%s\n", logFileData)
+	}
+}

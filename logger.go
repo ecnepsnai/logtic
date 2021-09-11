@@ -25,11 +25,15 @@ type Logger struct {
 type LoggerOptions struct {
 	// Should logtic not use color when printing events to stdout/stderr. Enabled by default.
 	Color bool
+	// Should logtic escape control characters automatically. For example, replaces actual newlines with a literal \n.
+	// Enabled by default.
+	EscapeCharacters bool
 }
 
 func defaultLoggerOption() LoggerOptions {
 	return LoggerOptions{
-		Color: true,
+		Color:            true,
+		EscapeCharacters: true,
 	}
 }
 
