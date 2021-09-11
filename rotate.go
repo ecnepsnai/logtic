@@ -54,19 +54,6 @@ func (l *Logger) Rotate() error {
 	return nil
 }
 
-// Rotate will rotate the log file of the default logging instance. The current log file will be renamed and suffixed
-// with the current date in a YYYY-MM-DD format. A new log file will be opened with the original file path and used for
-// all subsequent writes. Writes will be blocked while the rotation is in progress. If a file matching the name of what
-// would be used for the rotated file, a numerical suffix is added to the end of the name.
-//
-// If an error is returned during rotation it is highly recommended that you either panic or call logtic.Log.Reset()
-// as logtic may be in an undefined state and log calls may cause panics.
-//
-// As of logtic v1.7.0 this method calls logtic.Log.Rotate. This method will be removed in a future version of logtic.
-func Rotate() error {
-	return Log.Rotate()
-}
-
 func fileExists(filePath string) bool {
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {
 		return false

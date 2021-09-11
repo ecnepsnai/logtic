@@ -86,33 +86,3 @@ func (l *Logger) write(message string) {
 	defer l.lock.Unlock()
 	l.file.WriteString(time.Now().Format(time.RFC3339) + " " + message + "\n")
 }
-
-// Open will open the file specified by FilePath on the default logging instance. The file will be created if it does
-// not already exist, otherwise it will be appended to.
-//
-// As of logtic v1.7.0 this method calls logtic.Log.Open. This method will be removed in a future version of logtic.
-func Open() error {
-	return Log.Open()
-}
-
-// Reset will reset the default logging instance to its original state. Open files will be closed.
-//
-// As of logtic v1.7.0 this method calls logtic.Log.Reset. This method will be removed in a future version of logtic.
-func Reset() {
-	Log.Reset()
-}
-
-// Connect will prepare a new logtic source with the given name for the default logging instance. Sources can be written
-// even if there is no open logtic log instance.
-//
-// As of logtic v1.7.0 this method calls logtic.Log.Connect. This method will be removed in a future version of logtic.
-func Connect(sourceName string) *Source {
-	return Log.Connect(sourceName)
-}
-
-// Close will flush and close the default logging instance.
-//
-// As of logtic v1.7.0 this method calls logtic.Log.Close. This method will be removed in a future version of logtic.
-func Close() {
-	Log.Close()
-}
