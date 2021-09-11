@@ -1,7 +1,9 @@
 package logtic
 
 import (
+	"compress/gzip"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"time"
@@ -50,6 +52,9 @@ func (l *Logger) Rotate() error {
 		fmt.Fprintf(os.Stderr, "Error opening new log file '%s': %s", l.FilePath, err.Error())
 		return err
 	}
+	if l.Options.GZipRotatedLogs {
+		l.gzipFile(newPath)
+	}
 
 	return nil
 }
@@ -59,4 +64,34 @@ func fileExists(filePath string) bool {
 		return false
 	}
 	return true
+}
+
+func (l *Logger) gzipFile(filePath string) error {
+	gzipPath := filePath + ".gz"
+	if fileExists(gzipPath) {
+		return fmt.Errorf("gzipped file already exists")
+	}
+
+	logFile, err := os.OpenFile(filePath, os.O_RDONLY, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	defer logFile.Close()
+
+	gzFile, err := os.OpenFile(gzipPath, os.O_CREATE|os.O_RDWR, l.FileMode)
+	if err != nil {
+		return err
+	}
+	defer gzFile.Close()
+
+	gz := gzip.NewWriter(gzFile)
+
+	if _, err := io.Copy(gz, logFile); err != nil {
+		return err
+	}
+
+	gz.Close()
+	defer os.Remove(filePath)
+
+	return nil
 }
