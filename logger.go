@@ -14,24 +14,36 @@ type Logger struct {
 	Level int
 	// The file mode (permissions) used for the log file and rotated log files.
 	FileMode os.FileMode
-	// Should logtic use color for events printed to stdout/stderr.
-	Color bool
+	// Options various options for this logger
+	Options LoggerOptions
 
 	file *os.File
 	lock sync.Mutex
 }
 
+// LoggerOptions describe logger options
+type LoggerOptions struct {
+	// Should logtic not use color when printing events to stdout/stderr. Enabled by default.
+	Color bool
+}
+
+func defaultLoggerOption() LoggerOptions {
+	return LoggerOptions{
+		Color: true,
+	}
+}
+
 // Log is the default logging instance.
 var Log = New()
 
-// New will create a new logging instance. You should only use new if you want a separate logging instance from the
-// default instance, which is automatically created for you.
+// New will create a new logging instance with all default options. You should only use new if you want a separate
+// logging instance from the default instance, which is automatically created for you.
 func New() *Logger {
 	return &Logger{
 		FilePath: os.DevNull,
 		Level:    LevelError,
 		FileMode: 0644,
-		Color:    true,
+		Options:  defaultLoggerOption(),
 	}
 }
 
@@ -58,7 +70,7 @@ func (l *Logger) Reset() {
 	l.Level = LevelError
 	l.FileMode = 0644
 	l.lock = sync.Mutex{}
-	l.Color = true
+	l.Options = defaultLoggerOption()
 	l.file = nil
 }
 

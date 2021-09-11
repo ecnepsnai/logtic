@@ -11,7 +11,7 @@ func TestColor(t *testing.T) {
 
 	Log.Reset()
 	Log.Level = LevelWarn
-	Log.Color = false
+	Log.Options.Color = false
 	stdout = b
 	stderr = b
 	Log.Open()
