@@ -46,7 +46,7 @@ func (l *Logger) Rotate() error {
 		fmt.Fprintf(os.Stderr, "Error renaming existing log file: %s", err.Error())
 		return err
 	}
-	if err := Open(); err != nil {
+	if err := Log.Open(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error opening new log file '%s': %s", l.FilePath, err.Error())
 		return err
 	}

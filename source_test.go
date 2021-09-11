@@ -34,7 +34,7 @@ func TestSources(t *testing.T) {
 	source.Write(logtic.LevelError, "this is an %s message", "error")
 	errorPattern := regexp.MustCompile(`[0-9\-:TZ]+ \[ERROR\]\[test\] this is an error message`)
 
-	logtic.Close()
+	logtic.Log.Close()
 
 	logFileData, err := os.ReadFile(path.Join(dir, "logtic.log"))
 	if err != nil {
@@ -100,7 +100,7 @@ func TestSourceLevel(t *testing.T) {
 	source1.Info("info message")
 	source2.Info("info message")
 
-	logtic.Close()
+	logtic.Log.Close()
 
 	logFileData, err := os.ReadFile(path.Join(dir, "logtic.log"))
 	if err != nil {
@@ -165,7 +165,7 @@ func TestMultipleLogs(t *testing.T) {
 	aSource.Info("Info")
 	bSource.Warn("Warn")
 
-	logtic.Close()
+	logtic.Log.Close()
 	bLog.Close()
 
 	aLogData, err := os.ReadFile(aLogPath)

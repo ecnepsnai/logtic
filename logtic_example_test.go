@@ -23,7 +23,7 @@ func Example() {
 	log.Warn("Print something %s", "COOL!")
 
 	// Don't forget to close the log file when your application exits
-	logtic.Close()
+	logtic.Log.Close()
 }
 
 // This example shows how to set up a unique logging instance, separate form the default instance
@@ -60,7 +60,7 @@ func ExampleLogger_Open_withoutFile() {
 }
 
 // This example shows how to connect a new source to a logtic instance
-func ExampleConnect() {
+func ExampleLogger_Connect() {
 	// You can connect to logtic before a log file has been opened
 	// however, any events will not be captured until logtic.Log.Open()
 	// has been called
@@ -174,7 +174,7 @@ func ExampleSource_PPanic() {
 }
 
 // This example shows how to trigger a log file rotation
-func ExampleRotate() {
+func ExampleLogger_Rotate() {
 	logtic.Log.FilePath = "/path/to/log/file.log"
 
 	if err := logtic.Log.Open(); err != nil {

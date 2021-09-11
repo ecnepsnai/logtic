@@ -9,14 +9,14 @@ import (
 func TestColor(t *testing.T) {
 	b := &bytes.Buffer{}
 
-	Reset()
+	Log.Reset()
 	Log.Level = LevelWarn
 	Log.Color = false
 	stdout = b
 	stderr = b
-	Open()
+	Log.Open()
 
-	source := Connect("example")
+	source := Log.Connect("example")
 	source.Error("Warning")
 
 	stdout = os.Stdout
