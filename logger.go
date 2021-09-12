@@ -17,8 +17,9 @@ type Logger struct {
 	// Options various options for this logger
 	Options LoggerOptions
 
-	file *os.File
-	lock sync.Mutex
+	opened bool
+	file   *os.File
+	lock   sync.Mutex
 }
 
 // LoggerOptions describe logger options
@@ -57,6 +58,8 @@ func New() *Logger {
 // Open will open the file specified by FilePath on this logging instance. The file will be created if it does
 // not already exist, otherwise it will be appended to.
 func (l *Logger) Open() error {
+	l.opened = true
+
 	if l.file != nil {
 		return nil
 	}
@@ -79,6 +82,7 @@ func (l *Logger) Reset() {
 	l.lock = sync.Mutex{}
 	l.Options = defaultLoggerOption()
 	l.file = nil
+	l.opened = false
 }
 
 // Connect will prepare a new logtic source with the given name for this logging instance. Sources can be written

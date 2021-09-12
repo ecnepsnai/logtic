@@ -58,43 +58,6 @@ func TestWrite(t *testing.T) {
 	wg.Wait()
 }
 
-func TestDummy(t *testing.T) {
-	logtic.Log.Reset()
-
-	var wg sync.WaitGroup
-
-	wg.Add(3)
-	go func() {
-		defer wg.Done()
-		source := logtic.Log.Connect("goroutine1")
-		i := 0
-		for i < 5 {
-			i++
-			source.Debug("Count %d", i)
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		source := logtic.Log.Connect("goroutine2")
-		i := 0
-		for i < 5 {
-			i++
-			source.Debug("Count %d", i)
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		source := logtic.Log.Connect("goroutine3")
-		i := 0
-		for i < 5 {
-			i++
-			source.Debug("Count %d", i)
-		}
-	}()
-
-	wg.Wait()
-}
-
 func TestEarlyConnect(t *testing.T) {
 	logtic.Log.Reset()
 

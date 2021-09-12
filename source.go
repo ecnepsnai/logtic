@@ -16,7 +16,14 @@ type Source struct {
 	Name     string
 	Level    int
 	instance *Logger
-	dummy    bool
+}
+
+func (s *Source) formatMessage(format string, a ...interface{}) string {
+	message := fmt.Sprintf(format, a...)
+	if s.instance != nil && s.instance.Options.EscapeCharacters {
+		message = escapeCharacters(message)
+	}
+	return message
 }
 
 func (s *Source) write(message string) {
@@ -32,52 +39,40 @@ func (s *Source) checkLevel(levelWanted int) bool {
 
 // Debug will log a debug formatted message.
 func (s *Source) Debug(format string, a ...interface{}) {
-	if s == nil || s.instance == nil || s.checkLevel(LevelDebug) {
+	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelDebug) {
 		return
 	}
-	message := fmt.Sprintf(format, a...)
-	if s.instance.Options.EscapeCharacters {
-		message = escapeCharacters(message)
-	}
+	message := s.formatMessage(format, a...)
 	fmt.Fprintf(stdout, "%s %s\n", colorHiBlackString("[DEBUG]["+s.Name+"]"), message)
 	s.write("[DEBUG][" + s.Name + "] " + message)
 }
 
 // Info will log an informational formatted message.
 func (s *Source) Info(format string, a ...interface{}) {
-	if s == nil || s.instance == nil || s.checkLevel(LevelInfo) {
+	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelInfo) {
 		return
 	}
-	message := fmt.Sprintf(format, a...)
-	if s.instance.Options.EscapeCharacters {
-		message = escapeCharacters(message)
-	}
+	message := s.formatMessage(format, a...)
 	fmt.Fprintf(stdout, "%s %s\n", colorBlueString("[INFO]["+s.Name+"]"), message)
 	s.write("[INFO][" + s.Name + "] " + message)
 }
 
 // Warn will log a warning formatted message.
 func (s *Source) Warn(format string, a ...interface{}) {
-	if s == nil || s.instance == nil || s.checkLevel(LevelWarn) {
+	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelWarn) {
 		return
 	}
-	message := fmt.Sprintf(format, a...)
-	if s.instance.Options.EscapeCharacters {
-		message = escapeCharacters(message)
-	}
+	message := s.formatMessage(format, a...)
 	fmt.Fprintf(stdout, "%s %s\n", colorYellowString("[WARN]["+s.Name+"]"), message)
 	s.write("[WARN][" + s.Name + "] " + message)
 }
 
 // Error will log an error formatted message. Errors are printed to stderr.
 func (s *Source) Error(format string, a ...interface{}) {
-	if s == nil || s.instance == nil || s.checkLevel(LevelError) {
+	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelError) {
 		return
 	}
-	message := fmt.Sprintf(format, a...)
-	if s.instance.Options.EscapeCharacters {
-		message = escapeCharacters(message)
-	}
+	message := s.formatMessage(format, a...)
 	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[ERROR]["+s.Name+"]"), message)
 	s.write("[ERROR][" + s.Name + "] " + message)
 }
@@ -85,27 +80,17 @@ func (s *Source) Error(format string, a ...interface{}) {
 // Fatal will log a fatal formatted error message and exit the application with status 1.
 // Fatal messages are printed to stderr.
 func (s *Source) Fatal(format string, a ...interface{}) {
-	if s != nil && !s.dummy {
-		message := fmt.Sprintf(format, a...)
-		if s.instance.Options.EscapeCharacters {
-			message = escapeCharacters(message)
-		}
-		fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
-		s.write("[FATAL][" + s.Name + "] " + message)
-	}
+	message := s.formatMessage(format, a...)
+	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
+	s.write("[FATAL][" + s.Name + "] " + message)
 	os.Exit(1)
 }
 
 // Panic functions like source.Fatal() but panics rather than exits.
 func (s *Source) Panic(format string, a ...interface{}) {
-	message := fmt.Sprintf(format, a...)
-	if s != nil && s.instance != nil && s.instance.Options.EscapeCharacters {
-		message = escapeCharacters(message)
-	}
-	if s != nil && !s.dummy {
-		fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
-		s.write("[FATAL][" + s.Name + "] " + message)
-	}
+	message := s.formatMessage(format, a...)
+	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
+	s.write("[FATAL][" + s.Name + "] " + message)
 	panic(message)
 }
 
