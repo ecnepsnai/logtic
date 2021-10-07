@@ -1,31 +1,29 @@
 package logtic
 
-import "github.com/fatih/color"
-
 func colorHiBlackString(m string) string {
 	if !Log.Options.Color {
 		return m
 	}
-	return color.HiBlackString(m)
+	return colorGray + m + colorReset
 }
 
 func colorBlueString(m string) string {
 	if !Log.Options.Color {
 		return m
 	}
-	return color.BlueString(m)
+	return colorBlue + m + colorReset
 }
 
 func colorYellowString(m string) string {
 	if !Log.Options.Color {
 		return m
 	}
-	return color.YellowString(m)
+	return colorYellow + m + colorReset
 }
 
 func colorRedString(m string) string {
 	if !Log.Options.Color {
 		return m
 	}
-	return color.RedString(m)
+	return colorRed + m + colorReset
 }

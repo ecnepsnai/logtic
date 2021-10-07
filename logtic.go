@@ -18,4 +18,6 @@
 // to unique files and having unique settings.
 //
 // Log files can be rotated using the provided rotate method.
+//
+// Logtic is optimized for Linux & Unix environments but offers limited support for Windows.
 package logtic
