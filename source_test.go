@@ -1,6 +1,7 @@
 package logtic_test
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path"
@@ -12,7 +13,7 @@ import (
 
 // Test that the expected lines are printed to a log file
 func TestSources(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -58,14 +59,14 @@ func TestSources(t *testing.T) {
 	}
 }
 
-func TestPanic(t *testing.T) {
+func TestPanicEvent(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("The code did not panic")
 		}
 	}()
 
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -82,7 +83,7 @@ func TestPanic(t *testing.T) {
 }
 
 func TestSourceLevel(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -118,7 +119,7 @@ func TestSourceLevel(t *testing.T) {
 }
 
 func TestSourceWriteUnknownLevel(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -136,7 +137,7 @@ func TestSourceWriteUnknownLevel(t *testing.T) {
 }
 
 func TestMultipleLogs(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -153,6 +154,7 @@ func TestMultipleLogs(t *testing.T) {
 	aSource := logtic.Log.Connect("a-source")
 
 	bLog := logtic.New()
+	SetStdOut(bLog)
 	bLog.FilePath = bLogPath
 	bLog.Level = logtic.LevelDebug
 
@@ -199,7 +201,7 @@ func TestMultipleLogs(t *testing.T) {
 }
 
 func TestSourceEscapeCharacters(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -236,4 +238,35 @@ func TestSourceEscapeCharacters(t *testing.T) {
 	if t.Failed() {
 		fmt.Printf("Log file data:\n%s\n", logFileData)
 	}
+}
+
+// Test that nothing is printed to the console when the logger is not opened
+func TestLoggerNotOpened(t *testing.T) {
+	Setup()
+
+	b := &bytes.Buffer{}
+	logtic.Log.Stdout = b
+	logtic.Log.Stderr = b
+
+	source := logtic.Log.Connect("example")
+	source.Debug("Debug")
+	source.Info("Info")
+	source.Warn("Warn")
+	source.Error("Error")
+
+	if b.Len() != 0 {
+		t.Errorf("Data written to stdout/stderr that wasn't expected")
+	}
+
+	// Panic and Fatal messages are always printed to stderr
+	defer func() {
+		if r := recover(); r != nil {
+			Setup()
+
+			if b.Len() == 0 {
+				t.Errorf("Panic message not printed to stderr when expected")
+			}
+		}
+	}()
+	source.Panic("Panic!")
 }

@@ -7,10 +7,6 @@ import (
 	"strings"
 )
 
-// Abstract these out so we can test them
-var stdout io.Writer = os.Stdout
-var stderr io.Writer = os.Stderr
-
 // Source describes a source for log events
 type Source struct {
 	Name     string
@@ -37,13 +33,27 @@ func (s *Source) checkLevel(levelWanted int) bool {
 	return s.instance.Level < levelWanted
 }
 
+func (s *Source) stdout() io.Writer {
+	if s.instance == nil {
+		return os.Stdout
+	}
+	return s.instance.Stdout
+}
+
+func (s *Source) stderr() io.Writer {
+	if s.instance == nil {
+		return os.Stderr
+	}
+	return s.instance.Stderr
+}
+
 // Debug will log a debug formatted message.
 func (s *Source) Debug(format string, a ...interface{}) {
 	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelDebug) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(stdout, "%s %s\n", colorHiBlackString("[DEBUG]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stdout(), "%s %s\n", colorHiBlackString("[DEBUG]["+s.Name+"]"), message)
 	s.write("[DEBUG][" + s.Name + "] " + message)
 }
 
@@ -53,7 +63,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(stdout, "%s %s\n", colorBlueString("[INFO]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stdout(), "%s %s\n", colorBlueString("[INFO]["+s.Name+"]"), message)
 	s.write("[INFO][" + s.Name + "] " + message)
 }
 
@@ -63,7 +73,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(stdout, "%s %s\n", colorYellowString("[WARN]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stdout(), "%s %s\n", colorYellowString("[WARN]["+s.Name+"]"), message)
 	s.write("[WARN][" + s.Name + "] " + message)
 }
 
@@ -73,7 +83,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[ERROR]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[ERROR]["+s.Name+"]"), message)
 	s.write("[ERROR][" + s.Name + "] " + message)
 }
 
@@ -81,7 +91,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 // Fatal messages are printed to stderr.
 func (s *Source) Fatal(format string, a ...interface{}) {
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
 	s.write("[FATAL][" + s.Name + "] " + message)
 	os.Exit(1)
 }
@@ -89,7 +99,7 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 // Panic functions like source.Fatal() but panics rather than exits.
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(stderr, "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
 	s.write("[FATAL][" + s.Name + "] " + message)
 	panic(message)
 }

@@ -2,7 +2,6 @@ package logtic_test
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"path"
 	"testing"
@@ -17,7 +16,7 @@ func fileIsGreaterThan1Byte(inPath string, t *testing.T) {
 		t.Fatalf("Error stating rotated log file: %s", err.Error())
 	}
 
-	fmt.Printf("%s -> %d\n", inPath, info.Size())
+	t.Logf("%s -> %d", inPath, info.Size())
 
 	if info.Size() == 0 {
 		t.Errorf("Rotated log file is empty")
@@ -25,7 +24,7 @@ func fileIsGreaterThan1Byte(inPath string, t *testing.T) {
 }
 
 func TestRotate(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -65,7 +64,7 @@ func TestRotate(t *testing.T) {
 }
 
 func TestRotateDuplicate(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 
@@ -121,7 +120,7 @@ func TestRotateDuplicate(t *testing.T) {
 }
 
 func TestRotateGZip(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	dir := t.TempDir()
 

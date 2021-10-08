@@ -11,7 +11,7 @@ import (
 )
 
 func TestSourceParameters(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	logPath := path.Join(t.TempDir(), "logtic.log")
 

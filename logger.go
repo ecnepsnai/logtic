@@ -1,6 +1,7 @@
 package logtic
 
 import (
+	"io"
 	"os"
 	"sync"
 	"time"
@@ -16,6 +17,10 @@ type Logger struct {
 	FileMode os.FileMode
 	// Options various options for this logger
 	Options LoggerOptions
+	// Stdout the writer to use for standard output. Defaults to the system stdout.
+	Stdout io.Writer
+	// Stdout the writer to use for standard error. Defaults to the system stderr.
+	Stderr io.Writer
 
 	opened bool
 	file   *os.File
@@ -52,6 +57,8 @@ func New() *Logger {
 		Level:    LevelError,
 		FileMode: 0644,
 		Options:  defaultLoggerOption(),
+		Stdout:   os.Stdout,
+		Stderr:   os.Stderr,
 	}
 }
 

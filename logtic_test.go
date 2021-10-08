@@ -1,6 +1,8 @@
 package logtic_test
 
 import (
+	"io"
+	"os"
 	"path"
 	"sync"
 	"testing"
@@ -8,8 +10,36 @@ import (
 	"github.com/ecnepsnai/logtic"
 )
 
-func TestWrite(t *testing.T) {
+var verbose = false
+
+func TestMain(m *testing.M) {
+	for _, arg := range os.Args {
+		if arg == "-test.v=true" {
+			verbose = true
+			break
+		}
+	}
+
+	os.Exit(m.Run())
+}
+
+func SetStdOut(log *logtic.Logger) {
+	if verbose {
+		log.Stdout = os.Stdout
+		log.Stderr = os.Stderr
+	} else {
+		log.Stdout = io.Discard
+		log.Stderr = io.Discard
+	}
+}
+
+func Setup() {
 	logtic.Log.Reset()
+	SetStdOut(logtic.Log)
+}
+
+func TestWrite(t *testing.T) {
+	Setup()
 
 	dir := t.TempDir()
 
@@ -59,7 +89,7 @@ func TestWrite(t *testing.T) {
 }
 
 func TestEarlyConnect(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	s := logtic.Log.Connect("Test")
 
@@ -109,7 +139,7 @@ func TestEarlyConnect(t *testing.T) {
 }
 
 func TestOpenTwice(t *testing.T) {
-	logtic.Log.Reset()
+	Setup()
 
 	s := logtic.Log.Connect("Test")
 
