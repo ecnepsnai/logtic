@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime/debug"
 	"strings"
 )
 
@@ -49,6 +50,7 @@ func (s *Source) stderr() io.Writer {
 
 // Debug will log a debug formatted message.
 func (s *Source) Debug(format string, a ...interface{}) {
+	defer panicRecover()
 	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelDebug) {
 		return
 	}
@@ -59,6 +61,7 @@ func (s *Source) Debug(format string, a ...interface{}) {
 
 // Info will log an informational formatted message.
 func (s *Source) Info(format string, a ...interface{}) {
+	defer panicRecover()
 	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelInfo) {
 		return
 	}
@@ -69,6 +72,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 
 // Warn will log a warning formatted message.
 func (s *Source) Warn(format string, a ...interface{}) {
+	defer panicRecover()
 	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelWarn) {
 		return
 	}
@@ -79,6 +83,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 
 // Error will log an error formatted message. Errors are printed to stderr.
 func (s *Source) Error(format string, a ...interface{}) {
+	defer panicRecover()
 	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelError) {
 		return
 	}
@@ -133,4 +138,11 @@ func escapeCharacters(message string) string {
 	message = strings.ReplaceAll(message, "\r", "\\r")
 	message = strings.ReplaceAll(message, "\v", "\\v")
 	return message
+}
+
+func panicRecover() {
+	if r := recover(); r != nil {
+		fmt.Fprintf(os.Stderr, "logtic: recovered from panic writing event. stack to follow.\n")
+		debug.PrintStack()
+	}
 }
