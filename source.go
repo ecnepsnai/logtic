@@ -17,7 +17,7 @@ type Source struct {
 
 func (s *Source) formatMessage(format string, a ...interface{}) string {
 	message := fmt.Sprintf(format, a...)
-	if s.instance != nil && s.instance.Options.EscapeCharacters {
+	if s != nil && s.instance != nil && s.instance.Options.EscapeCharacters {
 		message = escapeCharacters(message)
 	}
 	return message
@@ -35,14 +35,14 @@ func (s *Source) checkLevel(levelWanted int) bool {
 }
 
 func (s *Source) stdout() io.Writer {
-	if s.instance == nil {
+	if s == nil || s.instance == nil {
 		return os.Stdout
 	}
 	return s.instance.Stdout
 }
 
 func (s *Source) stderr() io.Writer {
-	if s.instance == nil {
+	if s == nil || s.instance == nil {
 		return os.Stderr
 	}
 	return s.instance.Stderr
@@ -51,7 +51,7 @@ func (s *Source) stderr() io.Writer {
 // Debug will log a debug formatted message.
 func (s *Source) Debug(format string, a ...interface{}) {
 	defer panicRecover()
-	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelDebug) {
+	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelDebug) {
 		return
 	}
 	message := s.formatMessage(format, a...)
@@ -62,7 +62,7 @@ func (s *Source) Debug(format string, a ...interface{}) {
 // Info will log an informational formatted message.
 func (s *Source) Info(format string, a ...interface{}) {
 	defer panicRecover()
-	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelInfo) {
+	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelInfo) {
 		return
 	}
 	message := s.formatMessage(format, a...)
@@ -73,7 +73,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 // Warn will log a warning formatted message.
 func (s *Source) Warn(format string, a ...interface{}) {
 	defer panicRecover()
-	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelWarn) {
+	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelWarn) {
 		return
 	}
 	message := s.formatMessage(format, a...)
@@ -84,7 +84,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 // Error will log an error formatted message. Errors are printed to stderr.
 func (s *Source) Error(format string, a ...interface{}) {
 	defer panicRecover()
-	if s.instance == nil || !s.instance.opened || s.checkLevel(LevelError) {
+	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelError) {
 		return
 	}
 	message := s.formatMessage(format, a...)

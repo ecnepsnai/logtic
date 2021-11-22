@@ -270,3 +270,30 @@ func TestLoggerNotOpened(t *testing.T) {
 	}()
 	source.Panic("Panic!")
 }
+
+// Test that the instance does not panic (even if recovered) if a write event is called on a nil source or nil instance
+func TestNilLogInstance(t *testing.T) {
+	origStderr := os.Stderr
+	tempStderr := path.Join(t.TempDir(), "stderr")
+	f, err := os.OpenFile(tempStderr, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+	os.Stderr = f
+
+	var log *logtic.Source
+	log.Error("Error")
+
+	f.Close()
+
+	data, err := os.ReadFile(tempStderr)
+	if err != nil {
+		panic(err)
+	}
+	if bytes.Contains(data, []byte("logtic: recovered from panic writing event. stack to follow")) {
+		t.Errorf("logtic instance did panic")
+		t.Logf("%s", data)
+	}
+
+	os.Stderr = origStderr
+}
