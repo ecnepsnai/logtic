@@ -49,6 +49,8 @@ func TestSourceParameters(t *testing.T) {
 	}
 }
 
+type ExampleType string
+
 func TestStringFromParameters(t *testing.T) {
 	test := func(in interface{}, expected string) {
 		out := logtic.StringFromParameters(map[string]interface{}{
@@ -69,6 +71,7 @@ func TestStringFromParameters(t *testing.T) {
 	test(map[string]string{"hello": "world"}, "'map[hello:world]'")
 	test(struct{ hello string }{hello: "world"}, "'{world}'")
 	test(3.14, "3.140000")
+	test(ExampleType("hello"), "'hello'")
 }
 
 func TestFormatBytesB(t *testing.T) {

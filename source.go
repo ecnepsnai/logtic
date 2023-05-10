@@ -113,9 +113,12 @@ func (s *Source) Panic(format string, a ...interface{}) {
 
 // Write will call the matching write function for the given level, printing the provided message.
 // For example:
-//     source.Write(logtic.LevelDebug, "Hello world")
+//
+//	source.Write(logtic.LevelDebug, "Hello world")
+//
 // is the same as:
-//     source.Debug("Hello world")
+//
+//	source.Debug("Hello world")
 func (s *Source) Write(level int, format string, a ...interface{}) {
 	switch level {
 	case LevelDebug:
@@ -155,7 +158,7 @@ func (s *Source) GoLogger(level int) *log.Logger {
 	b := &bytes.Buffer{}
 
 	go func() {
-		for true {
+		for {
 			message, err := b.ReadString('\n')
 			if err != nil {
 				break

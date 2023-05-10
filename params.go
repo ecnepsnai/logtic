@@ -26,7 +26,11 @@ func StringFromParameters(parameters map[string]interface{}) string {
 		out += k + "="
 		switch t.Kind() {
 		case reflect.String:
-			out += "'" + v.(string) + "'"
+			if t.AssignableTo(reflect.TypeOf("")) {
+				out += "'" + v.(string) + "'"
+			} else {
+				out += fmt.Sprintf("'%v'", v)
+			}
 		case reflect.Int,
 			reflect.Int8,
 			reflect.Int16,
@@ -141,9 +145,12 @@ func (s *Source) PPanic(event string, parameters map[string]interface{}) {
 
 // PWrite will call the matching write function for the given level, printing the provided message.
 // For example:
-//     source.PWrite(logtic.LevelDebug, "My Event", map[string]interface{}{"key": "value"})
+//
+//	source.PWrite(logtic.LevelDebug, "My Event", map[string]interface{}{"key": "value"})
+//
 // is the same as:
-//     source.PDebug("My Event", map[string]interface{}{"key": "value"})
+//
+//	source.PDebug("My Event", map[string]interface{}{"key": "value"})
 func (s *Source) PWrite(level int, event string, parameters map[string]interface{}) {
 	switch level {
 	case LevelDebug:
