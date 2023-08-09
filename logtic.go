@@ -20,4 +20,7 @@
 // Log files can be rotated using the provided rotate method.
 //
 // Logtic is optimized for Linux & Unix environments but offers limited support for Windows.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 package logtic

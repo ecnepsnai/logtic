@@ -51,6 +51,9 @@ var Log = New()
 
 // New will create a new logging instance with all default options. You should only use new if you want a separate
 // logging instance from the default instance, which is automatically created for you.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func New() *Logger {
 	return &Logger{
 		FilePath: os.DevNull,
@@ -64,6 +67,9 @@ func New() *Logger {
 
 // Open will open the file specified by FilePath on this logging instance. The file will be created if it does
 // not already exist, otherwise it will be appended to.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (l *Logger) Open() error {
 	l.opened = true
 
@@ -94,6 +100,9 @@ func (l *Logger) Reset() {
 
 // Connect will prepare a new logtic source with the given name for this logging instance. Sources can be written
 // even if there is no open logtic log instance.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (l *Logger) Connect(sourceName string) *Source {
 	return &Source{
 		Name:     sourceName,

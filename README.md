@@ -1,3 +1,6 @@
+**⚠️ Deprecated!** This package should not be used after Go 1.21, instead you should use the built-in `log/slog` package
+which provides nearly all of the same functionality as this package.
+
 # logtic
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/ecnepsnai/logtic?style=flat-square)](https://goreportcard.com/report/github.com/ecnepsnai/logtic)

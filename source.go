@@ -51,6 +51,9 @@ func (s *Source) stderr() io.Writer {
 }
 
 // Debug will log a debug formatted message.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (s *Source) Debug(format string, a ...interface{}) {
 	defer panicRecover()
 	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelDebug) {
@@ -62,6 +65,9 @@ func (s *Source) Debug(format string, a ...interface{}) {
 }
 
 // Info will log an informational formatted message.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (s *Source) Info(format string, a ...interface{}) {
 	defer panicRecover()
 	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelInfo) {
@@ -73,6 +79,9 @@ func (s *Source) Info(format string, a ...interface{}) {
 }
 
 // Warn will log a warning formatted message.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (s *Source) Warn(format string, a ...interface{}) {
 	defer panicRecover()
 	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelWarn) {
@@ -84,6 +93,9 @@ func (s *Source) Warn(format string, a ...interface{}) {
 }
 
 // Error will log an error formatted message. Errors are printed to stderr.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (s *Source) Error(format string, a ...interface{}) {
 	defer panicRecover()
 	if s == nil || s.instance == nil || !s.instance.opened || s.checkLevel(LevelError) {
@@ -96,6 +108,9 @@ func (s *Source) Error(format string, a ...interface{}) {
 
 // Fatal will log a fatal formatted error message and exit the application with status 1.
 // Fatal messages are printed to stderr.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (s *Source) Fatal(format string, a ...interface{}) {
 	message := s.formatMessage(format, a...)
 	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
@@ -104,6 +119,9 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 }
 
 // Panic functions like source.Fatal() but panics rather than exits.
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := s.formatMessage(format, a...)
 	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
@@ -119,6 +137,9 @@ func (s *Source) Panic(format string, a ...interface{}) {
 // is the same as:
 //
 //	source.Debug("Hello world")
+//
+// Deprecated: This package should not be used after Go 1.21, instead you should use the built-in log/slog package
+// which provides nearly all of the same functionality as this package.
 func (s *Source) Write(level int, format string, a ...interface{}) {
 	switch level {
 	case LevelDebug:
