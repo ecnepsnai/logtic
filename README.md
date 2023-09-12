@@ -1,5 +1,5 @@
-**⚠️ Deprecated!** This package should not be used after Go 1.21, instead you should use the built-in `log/slog` package
-which provides nearly all of the same functionality as this package.
+> [!IMPORTANT]  
+> Following Go 1.21 and the introduction of the log/slog package, new projects should prefer to use that over logtic. This package will continue to be supported in terms of bugfixes and security fixes only. No new functionality will be added.
 
 # logtic
 
