@@ -1,12 +1,9 @@
-> [!IMPORTANT]  
-> Following Go 1.21 and the introduction of the log/slog package, new projects should prefer to use that over logtic. This package will continue to be supported in terms of bugfixes and security fixes only. No new functionality will be added.
-
 # logtic
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/ecnepsnai/logtic?style=flat-square)](https://goreportcard.com/report/github.com/ecnepsnai/logtic)
 [![Godoc](https://img.shields.io/badge/go-documentation-blue.svg?style=flat-square)](https://pkg.go.dev/github.com/ecnepsnai/logtic)
 [![Releases](https://img.shields.io/github/release/ecnepsnai/logtic/all.svg?style=flat-square)](https://github.com/ecnepsnai/logtic/releases)
-[![LICENSE](https://img.shields.io/github/license/ecnepsnai/logtic.svg?style=flat-square)](https://github.com/ecnepsnai/logtic/blob/master/LICENSE)
+[![LICENSE](https://img.shields.io/github/license/ecnepsnai/logtic.svg?style=flat-square)](https://github.com/ecnepsnai/logtic/blob/main/LICENSE)
 
 Logtic is a yet another logging library for golang projects.
 
