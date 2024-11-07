@@ -12,7 +12,7 @@ type Logger struct {
 	// The path to the log file.
 	FilePath string
 	// The minimum level of events captured in the log file and printed to console. Inclusive.
-	Level int
+	Level LogLevel
 	// The file mode (permissions) used for the log file and rotated log files.
 	FileMode os.FileMode
 	// Options various options for this logger

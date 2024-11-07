@@ -13,7 +13,7 @@ import (
 // Source describes a source for log events
 type Source struct {
 	Name     string
-	Level    int
+	Level    LogLevel
 	instance *Logger
 }
 
@@ -29,7 +29,7 @@ func (s *Source) write(message string) {
 	s.instance.write(message)
 }
 
-func (s *Source) checkLevel(levelWanted int) bool {
+func (s *Source) checkLevel(levelWanted LogLevel) bool {
 	if s.Level >= 0 {
 		return s.Level < levelWanted
 	}
@@ -119,7 +119,7 @@ func (s *Source) Panic(format string, a ...interface{}) {
 // is the same as:
 //
 //	source.Debug("Hello world")
-func (s *Source) Write(level int, format string, a ...interface{}) {
+func (s *Source) Write(level LogLevel, format string, a ...interface{}) {
 	switch level {
 	case LevelDebug:
 		s.Debug(format, a...)
@@ -154,7 +154,7 @@ func panicRecover() {
 
 // GoLogger returns a logger that acts as a proxy between the go/log package and logtic.
 // Printf events sent to this logger will be forwarded to this source with the given level.
-func (s *Source) GoLogger(level int) *log.Logger {
+func (s *Source) GoLogger(level LogLevel) *log.Logger {
 	b := &bytes.Buffer{}
 
 	go func() {

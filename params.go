@@ -151,7 +151,7 @@ func (s *Source) PPanic(event string, parameters map[string]interface{}) {
 // is the same as:
 //
 //	source.PDebug("My Event", map[string]interface{}{"key": "value"})
-func (s *Source) PWrite(level int, event string, parameters map[string]interface{}) {
+func (s *Source) PWrite(level LogLevel, event string, parameters map[string]interface{}) {
 	switch level {
 	case LevelDebug:
 		s.PDebug(event, parameters)

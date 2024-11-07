@@ -1,12 +1,14 @@
 package logtic
 
+type LogLevel int
+
 const (
 	// LevelDebug debug messages for troubleshooting application behaviour
-	LevelDebug = 3
+	LevelDebug = LogLevel(3)
 	// LevelInfo informational messages for normal operation of the application
-	LevelInfo = 2
+	LevelInfo = LogLevel(2)
 	// LevelWarn warning messages for potential issues
-	LevelWarn = 1
+	LevelWarn = LogLevel(1)
 	// LevelError error messages for problems
-	LevelError = 0
+	LevelError = LogLevel(0)
 )
