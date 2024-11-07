@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 	"time"
 )
 
 // Rotate will rotate the log file of this logging instance. The current log file will be renamed and suffixed
 // with the current date in a YYYY-MM-DD format. A new log file will be opened with the original file path and used for
 // all subsequent writes. Writes will be blocked while the rotation is in progress. If a file matching the name of what
-// would be used for the rotated file, a numerical suffix is added to the end of the name.
+// would be used for the rotated file, a dash and numerical suffix is added to the end of the name.
 //
 // If an error is returned during rotation it is highly recommended that you either panic or call logger.Reset()
 // as logtic may be in an undefined state and log calls may cause panics.
+//
+// If no log file has been opened on this logger, calls to Rotate do nothing.
 func (l *Logger) Rotate() error {
 	if l.file == nil {
 		return nil
@@ -24,14 +25,8 @@ func (l *Logger) Rotate() error {
 	l.lock.Lock()
 	defer l.lock.Unlock()
 
-	extensionComponents := strings.Split(l.FilePath, ".")
-	extension := extensionComponents[len(extensionComponents)-1]
-
-	pathComponents := strings.Split(l.FilePath, string(os.PathSeparator))
-	fileName := pathComponents[len(pathComponents)-1]
 	date := time.Now().Format("2006-01-02")
-	newName := strings.Replace(fileName, extension, extension+"."+date, -1)
-	newPath := strings.Replace(l.FilePath, fileName, newName, -1)
+	newPath := l.FilePath + "." + date
 
 	if fileExists(newPath) {
 		i := 1
@@ -41,7 +36,14 @@ func (l *Logger) Rotate() error {
 		newPath = fmt.Sprintf("%s-%d", newPath, i)
 	}
 
-	l.file.Close()
+	if err := l.file.Sync(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error syncing changes to existing log file: %s", err.Error())
+		return err
+	}
+	if err := l.file.Close(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error closing existing log file: %s", err.Error())
+		return err
+	}
 	l.file = nil
 
 	if err := os.Rename(l.FilePath, newPath); err != nil {
