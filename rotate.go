@@ -66,6 +66,8 @@ func fileExists(filePath string) bool {
 	return true
 }
 
+// Deprecated: Built-in gzip support will be removed in a future update. Compress rotated log files using tooling
+// on the host system.
 func (l *Logger) gzipFile(filePath string) error {
 	gzipPath := filePath + ".gz"
 	if fileExists(gzipPath) {

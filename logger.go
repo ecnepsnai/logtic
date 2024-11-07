@@ -35,6 +35,9 @@ type LoggerOptions struct {
 	// Enabled by default.
 	EscapeCharacters bool
 	// Should logtic automatically gzip log files after rotation. Disabled by default.
+	//
+	// Deprecated: Built-in gzip support will be removed in a future update. Compress rotated log files using tooling
+	// on the host system.
 	GZipRotatedLogs bool
 }
 
