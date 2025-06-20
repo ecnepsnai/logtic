@@ -115,7 +115,7 @@ func ExampleSource_Panic() {
 
 func ExampleSource_PDebug() {
 	log := logtic.Log.Connect("Example")
-	log.PDebug("Debug event", map[string]interface{}{
+	log.PDebug("Debug event", map[string]any{
 		"param1": "string",
 		"param2": 123,
 	})
@@ -125,7 +125,7 @@ func ExampleSource_PDebug() {
 
 func ExampleSource_PInfo() {
 	log := logtic.Log.Connect("Example")
-	log.PInfo("Info event", map[string]interface{}{
+	log.PInfo("Info event", map[string]any{
 		"param1": "string",
 		"param2": 123,
 	})
@@ -135,7 +135,7 @@ func ExampleSource_PInfo() {
 
 func ExampleSource_PWarn() {
 	log := logtic.Log.Connect("Example")
-	log.PWarn("Warning event", map[string]interface{}{
+	log.PWarn("Warning event", map[string]any{
 		"param1": "string",
 		"param2": 123,
 	})
@@ -145,7 +145,7 @@ func ExampleSource_PWarn() {
 
 func ExampleSource_PError() {
 	log := logtic.Log.Connect("Example")
-	log.PError("Error event", map[string]interface{}{
+	log.PError("Error event", map[string]any{
 		"param1": "string",
 		"param2": 123,
 	})
@@ -155,7 +155,7 @@ func ExampleSource_PError() {
 
 func ExampleSource_PFatal() {
 	log := logtic.Log.Connect("Example")
-	log.PFatal("Fatal event", map[string]interface{}{
+	log.PFatal("Fatal event", map[string]any{
 		"param1": "string",
 		"param2": 123,
 	})
@@ -165,7 +165,7 @@ func ExampleSource_PFatal() {
 
 func ExampleSource_PPanic() {
 	log := logtic.Log.Connect("Example")
-	log.PPanic("Panic event", map[string]interface{}{
+	log.PPanic("Panic event", map[string]any{
 		"param1": "string",
 		"param2": 123,
 	})
@@ -189,7 +189,7 @@ func ExampleLogger_Rotate() {
 }
 
 func ExampleStringFromParameters() {
-	fmt.Println(logtic.StringFromParameters(map[string]interface{}{
+	fmt.Println(logtic.StringFromParameters(map[string]any{
 		"hello":            "world!",
 		"meaning_of_life":  42,
 		"pie":              3.12,

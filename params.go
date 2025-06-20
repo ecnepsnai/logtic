@@ -10,7 +10,7 @@ import (
 // StringFromParameters return a key=value string for the given parameters. Depending on the type of the parameter
 // value, it may be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always
 // alphabetically sorted in the outputted string.
-func StringFromParameters(parameters map[string]interface{}) string {
+func StringFromParameters(parameters map[string]any) string {
 	out := ""
 	last := len(parameters) - 1
 	i := 0
@@ -98,7 +98,7 @@ func FormatBytesD(b uint64) string {
 // Parameterized messages are formatted as key=value strings. Depending on the type of the parameter value, it may
 // be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always alphabetically
 // sorted in the outputted string.
-func (s *Source) PDebug(event string, parameters map[string]interface{}) {
+func (s *Source) PDebug(event string, parameters map[string]any) {
 	s.Debug("%s: %s", event, StringFromParameters(parameters))
 }
 
@@ -106,7 +106,7 @@ func (s *Source) PDebug(event string, parameters map[string]interface{}) {
 // Parameterized messages are formatted as key=value strings. Depending on the type of the parameter value, it may
 // be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always alphabetically
 // sorted in the outputted string.
-func (s *Source) PInfo(event string, parameters map[string]interface{}) {
+func (s *Source) PInfo(event string, parameters map[string]any) {
 	s.Info("%s: %s", event, StringFromParameters(parameters))
 }
 
@@ -114,7 +114,7 @@ func (s *Source) PInfo(event string, parameters map[string]interface{}) {
 // Parameterized messages are formatted as key=value strings. Depending on the type of the parameter value, it may
 // be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always alphabetically
 // sorted in the outputted string.
-func (s *Source) PWarn(event string, parameters map[string]interface{}) {
+func (s *Source) PWarn(event string, parameters map[string]any) {
 	s.Warn("%s: %s", event, StringFromParameters(parameters))
 }
 
@@ -122,7 +122,7 @@ func (s *Source) PWarn(event string, parameters map[string]interface{}) {
 // Parameterized messages are formatted as key=value strings. Depending on the type of the parameter value, it may
 // be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always alphabetically
 // sorted in the outputted string.
-func (s *Source) PError(event string, parameters map[string]interface{}) {
+func (s *Source) PError(event string, parameters map[string]any) {
 	s.Error("%s: %s", event, StringFromParameters(parameters))
 }
 
@@ -131,7 +131,7 @@ func (s *Source) PError(event string, parameters map[string]interface{}) {
 // Parameterized messages are formatted as key=value strings. Depending on the type of the parameter value, it may
 // be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always alphabetically
 // sorted in the outputted string.
-func (s *Source) PFatal(event string, parameters map[string]interface{}) {
+func (s *Source) PFatal(event string, parameters map[string]any) {
 	s.Fatal("%s: %s", event, StringFromParameters(parameters))
 }
 
@@ -139,19 +139,19 @@ func (s *Source) PFatal(event string, parameters map[string]interface{}) {
 // Parameterized messages are formatted as key=value strings. Depending on the type of the parameter value, it may
 // be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always alphabetically
 // sorted in the outputted string.
-func (s *Source) PPanic(event string, parameters map[string]interface{}) {
+func (s *Source) PPanic(event string, parameters map[string]any) {
 	s.Panic("%s: %s", event, StringFromParameters(parameters))
 }
 
 // PWrite will call the matching write function for the given level, printing the provided message.
 // For example:
 //
-//	source.PWrite(logtic.LevelDebug, "My Event", map[string]interface{}{"key": "value"})
+//	source.PWrite(logtic.LevelDebug, "My Event", map[string]any{"key": "value"})
 //
 // is the same as:
 //
-//	source.PDebug("My Event", map[string]interface{}{"key": "value"})
-func (s *Source) PWrite(level LogLevel, event string, parameters map[string]interface{}) {
+//	source.PDebug("My Event", map[string]any{"key": "value"})
+func (s *Source) PWrite(level LogLevel, event string, parameters map[string]any) {
 	switch level {
 	case LevelDebug:
 		s.PDebug(event, parameters)

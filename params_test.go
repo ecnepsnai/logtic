@@ -22,7 +22,7 @@ func TestSourceParameters(t *testing.T) {
 		t.Fatalf("Error opening log file: %s", err.Error())
 	}
 
-	parameters := map[string]interface{}{
+	parameters := map[string]any{
 		"string": "hello, world!",
 		"int":    123,
 		"float":  3.14,
@@ -53,7 +53,7 @@ type ExampleType string
 
 func TestStringFromParameters(t *testing.T) {
 	test := func(in interface{}, expected string) {
-		out := logtic.StringFromParameters(map[string]interface{}{
+		out := logtic.StringFromParameters(map[string]any{
 			"key": in,
 		})
 		result := out[4:]
