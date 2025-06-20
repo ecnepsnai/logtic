@@ -34,18 +34,12 @@ type LoggerOptions struct {
 	// Should logtic escape control characters automatically. For example, replaces actual newlines with a literal \n.
 	// Enabled by default.
 	EscapeCharacters bool
-	// Should logtic automatically gzip log files after rotation. Disabled by default.
-	//
-	// Deprecated: Built-in gzip support will be removed in a future update. Compress rotated log files using tooling
-	// on the host system.
-	GZipRotatedLogs bool
 }
 
 func defaultLoggerOption() LoggerOptions {
 	return LoggerOptions{
 		Color:            true,
 		EscapeCharacters: true,
-		GZipRotatedLogs:  false,
 	}
 }
 

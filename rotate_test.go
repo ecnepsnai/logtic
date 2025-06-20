@@ -1,7 +1,6 @@
 package logtic_test
 
 import (
-	"bytes"
 	"os"
 	"path"
 	"testing"
@@ -117,57 +116,4 @@ func TestRotateDuplicate(t *testing.T) {
 		fileIsGreaterThan1Byte(expectedPath, t)
 	}
 	fileIsGreaterThan1Byte(currentPath, t)
-}
-
-func TestRotateGZip(t *testing.T) {
-	Setup()
-
-	dir := t.TempDir()
-
-	logtic.Log.FilePath = path.Join(dir, "app.log")
-	logtic.Log.Level = logtic.LevelDebug
-	logtic.Log.Options.GZipRotatedLogs = true
-
-	if err := logtic.Log.Open(); err != nil {
-		t.Fatalf("Error opening log file: %s", err.Error())
-	}
-
-	s := logtic.Log.Connect("Test")
-	i := 0
-	for i < 5 {
-		i++
-		s.Debug("Count %d", i)
-	}
-
-	if err := logtic.Log.Rotate(); err != nil {
-		panic(err)
-	}
-
-	s.Info("Rotated log")
-
-	date := time.Now().Format("2006-01-02")
-	expectedPath := path.Join(dir, "app.log."+date+".gz")
-	if _, err := os.Stat(expectedPath); err != nil {
-		t.Errorf("Expected rotated log file not found: '%s'", expectedPath)
-	}
-
-	currentPath := path.Join(dir, "app.log")
-	if _, err := os.Stat(currentPath); err != nil {
-		t.Errorf("Expected new log file not found: '%s'", currentPath)
-	}
-
-	fileIsGreaterThan1Byte(expectedPath, t)
-	fileIsGreaterThan1Byte(currentPath, t)
-
-	gzipMagicNumber := []byte{0x1F, 0x8B}
-	magicNumber := make([]byte, 2)
-	f, err := os.OpenFile(expectedPath, os.O_RDONLY, 0644)
-	if err != nil {
-		t.Fatalf("Error reading rotated log file: %s", err.Error())
-	}
-	defer f.Close()
-	f.Read(magicNumber)
-	if !bytes.Equal(gzipMagicNumber, magicNumber) {
-		t.Errorf("Incorrect file signature for rotated log file. Got '%x' expected '%x'", magicNumber, gzipMagicNumber)
-	}
 }
