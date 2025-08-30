@@ -13,8 +13,18 @@ import (
 // Source describes a source for log events
 type Source struct {
 	Name     string
-	Level    LogLevel
+	level    *LogLevel
 	instance *Logger
+}
+
+// OverrideLevel will specify a new log level for this source alone, ignoring the log level of the parent instance
+func (s *Source) OverrideLevel(level LogLevel) {
+	s.level = &level
+}
+
+// ClearLevelOverride will clear any override log level for this source, reverting back to the level of the parent instance
+func (s *Source) ClearLevelOverride() {
+	s.level = nil
 }
 
 func (s *Source) formatMessage(format string, a ...interface{}) string {
@@ -30,8 +40,8 @@ func (s *Source) write(message string) {
 }
 
 func (s *Source) checkLevel(levelWanted LogLevel) bool {
-	if s.Level >= 0 {
-		return s.Level < levelWanted
+	if s.level != nil {
+		return *s.level < levelWanted
 	}
 	return s.instance.Level < levelWanted
 }

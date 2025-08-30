@@ -11,6 +11,10 @@ import (
 // value, it may be wrapped in single quotes. Byte slices are represented as hexadecimal strings. Parameters are always
 // alphabetically sorted in the outputted string.
 func StringFromParameters(parameters map[string]any) string {
+	if parameters == nil {
+		return ""
+	}
+
 	out := ""
 	last := len(parameters) - 1
 	i := 0
@@ -24,40 +28,44 @@ func StringFromParameters(parameters map[string]any) string {
 		v := parameters[k]
 		t := reflect.TypeOf(v)
 		out += k + "="
-		switch t.Kind() {
-		case reflect.String:
-			if t.AssignableTo(reflect.TypeOf("")) {
-				out += "'" + v.(string) + "'"
-			} else {
+		if t == nil {
+			out += "nil"
+		} else {
+			switch t.Kind() {
+			case reflect.String:
+				if t.AssignableTo(reflect.TypeOf("")) {
+					out += "'" + v.(string) + "'"
+				} else {
+					out += fmt.Sprintf("'%v'", v)
+				}
+			case reflect.Int,
+				reflect.Int8,
+				reflect.Int16,
+				reflect.Int32,
+				reflect.Int64,
+				reflect.Uint,
+				reflect.Uint8,
+				reflect.Uint16,
+				reflect.Uint32,
+				reflect.Uint64:
+				out += fmt.Sprintf("%d", v)
+			case reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128:
+				out += fmt.Sprintf("%f", v)
+			case reflect.Slice, reflect.Array:
+				if b, isBytes := v.([]byte); isBytes {
+					out += fmt.Sprintf("%x", b)
+				} else {
+					out += fmt.Sprintf("'%v'", v)
+				}
+			case reflect.Struct:
+				if t, isTime := v.(time.Time); isTime {
+					out += "'" + t.Format(time.RFC3339) + "'"
+				} else {
+					out += fmt.Sprintf("'%v'", v)
+				}
+			default:
 				out += fmt.Sprintf("'%v'", v)
 			}
-		case reflect.Int,
-			reflect.Int8,
-			reflect.Int16,
-			reflect.Int32,
-			reflect.Int64,
-			reflect.Uint,
-			reflect.Uint8,
-			reflect.Uint16,
-			reflect.Uint32,
-			reflect.Uint64:
-			out += fmt.Sprintf("%d", v)
-		case reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128:
-			out += fmt.Sprintf("%f", v)
-		case reflect.Slice, reflect.Array:
-			if b, isBytes := v.([]byte); isBytes {
-				out += fmt.Sprintf("%x", b)
-			} else {
-				out += fmt.Sprintf("'%v'", v)
-			}
-		case reflect.Struct:
-			if t, isTime := v.(time.Time); isTime {
-				out += "'" + t.Format(time.RFC3339) + "'"
-			} else {
-				out += fmt.Sprintf("'%v'", v)
-			}
-		default:
-			out += fmt.Sprintf("'%v'", v)
 		}
 		if i != last {
 			out += " "
@@ -152,6 +160,8 @@ func (s *Source) PPanic(event string, parameters map[string]any) {
 //
 //	source.PDebug("My Event", map[string]any{"key": "value"})
 func (s *Source) PWrite(level LogLevel, event string, parameters map[string]any) {
+	defer panicRecover()
+
 	switch level {
 	case LevelDebug:
 		s.PDebug(event, parameters)

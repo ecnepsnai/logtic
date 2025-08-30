@@ -96,7 +96,7 @@ func TestSourceLevel(t *testing.T) {
 
 	source1 := logtic.Log.Connect("source1")
 	source2 := logtic.Log.Connect("source2")
-	source2.Level = logtic.LevelWarn
+	source2.OverrideLevel(logtic.LevelWarn)
 
 	source1.Info("info message")
 	source2.Info("info message")

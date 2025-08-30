@@ -95,7 +95,7 @@ func (l *Logger) Reset() {
 func (l *Logger) Connect(sourceName string) *Source {
 	return &Source{
 		Name:     sourceName,
-		Level:    -1,
+		level:    nil,
 		instance: l,
 	}
 }
