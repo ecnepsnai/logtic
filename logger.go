@@ -21,6 +21,8 @@ type Logger struct {
 	Stdout io.Writer
 	// Stdout the writer to use for standard error. Defaults to the system stderr.
 	Stderr io.Writer
+	// Color is the interface to apply color to messages. Defaults to using ANSI color codes.
+	Color IColor
 
 	opened bool
 	file   *os.File
@@ -29,8 +31,6 @@ type Logger struct {
 
 // LoggerOptions describe logger options
 type LoggerOptions struct {
-	// Should logtic not use color when printing events to stdout/stderr. Enabled by default.
-	Color bool
 	// Should logtic escape control characters automatically. For example, replaces actual newlines with a literal \n.
 	// Enabled by default.
 	EscapeCharacters bool
@@ -38,7 +38,6 @@ type LoggerOptions struct {
 
 func defaultLoggerOption() LoggerOptions {
 	return LoggerOptions{
-		Color:            true,
 		EscapeCharacters: true,
 	}
 }
@@ -56,6 +55,7 @@ func New() *Logger {
 		Options:  defaultLoggerOption(),
 		Stdout:   os.Stdout,
 		Stderr:   os.Stderr,
+		Color:    &tDefaultColor{},
 	}
 }
 
@@ -85,6 +85,7 @@ func (l *Logger) Reset() {
 	l.FileMode = 0644
 	l.lock = sync.Mutex{}
 	l.Options = defaultLoggerOption()
+	l.Color = &tDefaultColor{}
 	l.file = nil
 	l.opened = false
 }

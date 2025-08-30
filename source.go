@@ -57,7 +57,7 @@ func (s *Source) Debug(format string, a ...interface{}) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(s.stdout(), "%s %s\n", colorHiBlackString("[DEBUG]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stdout(), "%s %s\n", s.colorHiBlack("[DEBUG]["+s.Name+"]"), message)
 	s.write("[DEBUG][" + s.Name + "] " + message)
 }
 
@@ -68,7 +68,7 @@ func (s *Source) Info(format string, a ...interface{}) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(s.stdout(), "%s %s\n", colorBlueString("[INFO]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stdout(), "%s %s\n", s.colorBlue("[INFO]["+s.Name+"]"), message)
 	s.write("[INFO][" + s.Name + "] " + message)
 }
 
@@ -79,7 +79,7 @@ func (s *Source) Warn(format string, a ...interface{}) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(s.stdout(), "%s %s\n", colorYellowString("[WARN]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stdout(), "%s %s\n", s.colorYellow("[WARN]["+s.Name+"]"), message)
 	s.write("[WARN][" + s.Name + "] " + message)
 }
 
@@ -90,7 +90,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 		return
 	}
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[ERROR]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stderr(), "%s %s\n", s.colorRed("[ERROR]["+s.Name+"]"), message)
 	s.write("[ERROR][" + s.Name + "] " + message)
 }
 
@@ -98,7 +98,7 @@ func (s *Source) Error(format string, a ...interface{}) {
 // Fatal messages are printed to stderr.
 func (s *Source) Fatal(format string, a ...interface{}) {
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stderr(), "%s %s\n", s.colorRed("[FATAL]["+s.Name+"]"), message)
 	s.write("[FATAL][" + s.Name + "] " + message)
 	os.Exit(1)
 }
@@ -106,7 +106,7 @@ func (s *Source) Fatal(format string, a ...interface{}) {
 // Panic functions like source.Fatal() but panics rather than exits.
 func (s *Source) Panic(format string, a ...interface{}) {
 	message := s.formatMessage(format, a...)
-	fmt.Fprintf(s.stderr(), "%s %s\n", colorRedString("[FATAL]["+s.Name+"]"), message)
+	fmt.Fprintf(s.stderr(), "%s %s\n", s.colorRed("[FATAL]["+s.Name+"]"), message)
 	s.write("[FATAL][" + s.Name + "] " + message)
 	panic(message)
 }
