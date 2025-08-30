@@ -1,10 +1,8 @@
 package logtic
 
 import (
-	"bytes"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"runtime/debug"
 	"strings"
@@ -160,22 +158,4 @@ func panicRecover() {
 		fmt.Fprintf(os.Stderr, "logtic: recovered from panic writing event. stack to follow.\n")
 		debug.PrintStack()
 	}
-}
-
-// GoLogger returns a logger that acts as a proxy between the go/log package and logtic.
-// Printf events sent to this logger will be forwarded to this source with the given level.
-func (s *Source) GoLogger(level LogLevel) *log.Logger {
-	b := &bytes.Buffer{}
-
-	go func() {
-		for {
-			message, err := b.ReadString('\n')
-			if err != nil {
-				break
-			}
-			s.Write(level, message[0:len(message)-1])
-		}
-	}()
-
-	return log.New(b, "", 0)
 }

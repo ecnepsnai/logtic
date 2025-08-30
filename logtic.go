@@ -1,9 +1,5 @@
 // Package logtic is a yet another logging library for golang projects.
 //
-// Important: Following Go 1.21 and the introduction of the log/slog package, new projects should prefer to use that
-// over logtic. This package will continue to be supported in terms of bugfixes and security fixes only.
-// No new functionality will be added.
-//
 // The goal of logtic is to be as transparent and easy to use as possible, allowing applications and libraries to
 // seamlessly log to a single file. Logtic can be used in libraries and won't cause any problems if the parent
 // application isn't using logtic.

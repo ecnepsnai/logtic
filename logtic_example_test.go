@@ -174,14 +174,14 @@ func ExampleSource_PPanic() {
 }
 
 // This example shows how to trigger a log file rotation
-func ExampleLogger_Rotate() {
+func ExampleLogger_RotateDate() {
 	logtic.Log.FilePath = "/path/to/log/file.log"
 
 	if err := logtic.Log.Open(); err != nil {
 		panic(err)
 	}
 
-	if err := logtic.Log.Rotate(); err != nil {
+	if err := logtic.Log.RotateDate(); err != nil {
 		// There was an error rotating the log
 		// It's recommended that you panic or exit here, as logtic is now in an undefined state
 		panic(err)

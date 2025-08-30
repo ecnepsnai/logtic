@@ -41,7 +41,7 @@ func TestRotate(t *testing.T) {
 		s.Debug("Count %d", i)
 	}
 
-	if err := logtic.Log.Rotate(); err != nil {
+	if err := logtic.Log.RotateDate(); err != nil {
 		panic(err)
 	}
 
@@ -85,7 +85,7 @@ func TestRotateDuplicate(t *testing.T) {
 			s.Debug("i=%d y=%d", i, y)
 		}
 
-		if err := logtic.Log.Rotate(); err != nil {
+		if err := logtic.Log.RotateDate(); err != nil {
 			panic(err)
 		}
 

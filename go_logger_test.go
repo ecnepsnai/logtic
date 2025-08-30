@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/ecnepsnai/logtic"
 )
@@ -22,9 +21,8 @@ func TestGoLogger(t *testing.T) {
 	source := logtic.Log.Connect("example")
 	l := source.GoLogger(logtic.LevelError)
 	l.Print("Example")
-	time.Sleep(100 * time.Millisecond)
 
 	if !strings.Contains(b.String(), "example") {
-		t.Errorf("Output did not contain expected message")
+		t.Errorf("Output did not contain expected message. Expected to see 'example' in '%s'", b.String())
 	}
 }
