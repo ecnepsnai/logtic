@@ -181,7 +181,7 @@ func ExampleLogger_RotateDate() {
 		panic(err)
 	}
 
-	if err := logtic.Log.RotateDate(); err != nil {
+	if err := logtic.Log.RotateDate(time.Now().AddDate(0, 0, -1)); err != nil {
 		// There was an error rotating the log
 		// It's recommended that you panic or exit here, as logtic is now in an undefined state
 		panic(err)
