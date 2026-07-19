@@ -20,4 +20,8 @@
 // Log files can be rotated using the provided rotate method.
 //
 // Logtic is optimized for Linux & Unix environments but offers limited support for Windows.
+//
+// Deprecated: github.com/ecnepsnai/logtic is deprecated and replaced by git.ecn.io/ian/logtic. All users should migrate to
+// git.ecn.io/ian/logtic for continued updates. Tag v1.0.0 is drop-in compatible copy of the last release of
+// github.com/ecnepsnai/logtic.
 package logtic

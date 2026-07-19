@@ -1,3 +1,8 @@
+> [!CAUTION]
+> `github.com/ecnepsnai/logtic` is deprecated and replaced by [git.ecn.io/ian/logtic](https://git.ecn.io/ian/logtic).
+> All users should migrate to `git.ecn.io/ian/logtic` for continued updates. Tag v1.0.0 is drop-in compatible copy of the
+> last release of `github.com/ecnepsnai/logtic`.
+
 # logtic
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/ecnepsnai/logtic?style=flat-square)](https://goreportcard.com/report/github.com/ecnepsnai/logtic)
